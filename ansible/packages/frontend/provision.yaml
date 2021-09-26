@@ -1,0 +1,9 @@
+---
+- group:
+    name: frontend
+    state: present
+- user:
+    name: frontend
+    state: present
+    group: frontend
+    shell: /bin/bash

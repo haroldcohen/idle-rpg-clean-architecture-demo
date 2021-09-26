@@ -1,0 +1,13 @@
+---
+# Put the variables that will be used by every target here
+contact_email: harold.cohen@thetribe.io
+backend_port: 4000
+backend_env:
+  DATABASE_URL: postgres://backend:{{ backend_database_password }}@localhost/backend
+  NODE_ENV: production
+  PORT: '{{ backend_port }}'
+  SENTRY_DSN: ~ # TODO: Add your sentry DSN here
+  SENTRY_ENVIRONMENT: '{{ environment_name }}'
+frontend_data:
+  sentry-dsn: ~ # TODO: Add your sentry DSN here
+  sentry-environment: '{{ environment_name }}'

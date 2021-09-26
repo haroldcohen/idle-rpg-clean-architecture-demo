@@ -1,0 +1,29 @@
+version: "2.4"
+services:
+    nginx:
+        build: ./nginx/docker
+        ports:
+            - ${PORT:-4000}:80
+    postgres:
+        build: ./postgres/docker
+        environment:
+            PGUSER: user
+            PGPASSWORD: password
+            POSTGRES_USER: user
+            POSTGRES_PASSWORD: password
+    backend:
+        build:
+            context: backend/docker
+            args:
+                UID: ${UID:-1000}
+        volumes:
+            - ./backend:/usr/src/project/backend
+        environment:
+            DATABASE_URL: postgresql://user:password@postgres/idle_rpg
+    frontend:
+        build:
+            context: frontend/docker
+            args:
+                UID: ${UID:-1000}
+        volumes:
+            - ./frontend:/usr/src/project/frontend

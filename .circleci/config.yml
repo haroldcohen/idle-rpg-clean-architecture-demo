@@ -1,0 +1,206 @@
+version: "2.1"
+orbs:
+  node: circleci/node@4.5.1
+executors:
+  node:
+    docker:
+      - image: circleci/node:14.17.6
+  php:
+    docker:
+      - image: circleci/php:8.0.7
+jobs:
+  backend-yarn-install:
+    executor: node
+    steps:
+      - checkout
+      - node/install-packages:
+          app-dir: backend
+          include-branch-in-cache-key: false
+          pkg-manager: yarn
+      - persist_to_workspace:
+          root: .
+          paths:
+            - backend/node_modules
+  backend-lint:
+    executor: node
+    working_directory: ~/project/backend
+    steps:
+      - checkout:
+          path: ~/project
+      - attach_workspace:
+          at: ~/project
+      - run:
+          command: yarn lint
+  backend-test:
+    executor: node
+    working_directory: ~/project/backend
+    steps:
+      - checkout:
+          path: ~/project
+      - attach_workspace:
+          at: ~/project
+      - run:
+          command: yarn test
+  backend-build:
+    executor: node
+    working_directory: ~/project/backend
+    steps:
+      - checkout:
+          path: ~/project
+      - attach_workspace:
+          at: ~/project
+      - run: echo "export default '${CIRCLE_SHA1}';" > src/version.ts
+      - run:
+          command: yarn build
+          environment:
+            NODE_ENV: production
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - backend/dist
+  backend-archive:
+    executor: node
+    working_directory: ~/project/backend
+    steps:
+      - checkout:
+          path: ~/project
+      - attach_workspace:
+          at: ~/project
+      - run:
+          command: yarn install --prod --frozen-lockfile
+      - run:
+          command: mv ormconfig-dist.js ormconfig.js
+      - run:
+          name: Create archive
+          command: |
+            tar --create --gzip --file=archive.tar.gz --owner=0 --group=0 \
+              dist/ \
+              node_modules/ \
+              ormconfig.js \
+      - store_artifacts:
+          path: archive.tar.gz
+          destination: backend.tar.gz
+  backend-sentry-release:
+    docker:
+      - image: getsentry/sentry-cli:1.61.0
+        entrypoint: ""
+        environment:
+          SENTRY_PROJECT: idle-rpg-clean-architecture-demo-backend
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run: sentry-cli releases new idle-rpg-clean-architecture-demo-backend@${CIRCLE_SHA1}
+      - run: sentry-cli releases files idle-rpg-clean-architecture-demo-backend@${CIRCLE_SHA1} upload-sourcemaps backend/dist
+      - run: sentry-cli releases finalize idle-rpg-clean-architecture-demo-backend@${CIRCLE_SHA1}
+  frontend-yarn-install:
+    executor: node
+    steps:
+      - checkout
+      - node/install-packages:
+          app-dir: frontend
+          include-branch-in-cache-key: false
+          pkg-manager: yarn
+      - persist_to_workspace:
+          root: .
+          paths:
+            - frontend/node_modules
+  frontend-lint:
+    executor: node
+    working_directory: ~/project/frontend
+    steps:
+      - checkout:
+          path: ~/project
+      - attach_workspace:
+          at: ~/project
+      - run:
+          command: yarn lint
+  frontend-build:
+    executor: node
+    working_directory: ~/project/frontend
+    steps:
+      - checkout:
+          path: ~/project
+      - attach_workspace:
+          at: ~/project
+      - run: echo "export default '${CIRCLE_SHA1}';" > src/version.ts
+      - run:
+          command: yarn build
+          environment:
+            NODE_ENV: production
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - frontend/build
+  frontend-archive:
+    executor: node
+    working_directory: ~/project/frontend
+    steps:
+      - checkout:
+          path: ~/project
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Create archive
+          command: |
+            tar --create --gzip --file=archive.tar.gz --owner=0 --group=0 \
+              build/ \
+      - store_artifacts:
+          path: archive.tar.gz
+          destination: frontend.tar.gz
+  frontend-sentry-release:
+    docker:
+      - image: getsentry/sentry-cli:1.61.0
+        entrypoint: ""
+        environment:
+          SENTRY_PROJECT: idle-rpg-clean-architecture-demo-frontend
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run: sentry-cli releases new idle-rpg-clean-architecture-demo-frontend@${CIRCLE_SHA1}
+      - run: sentry-cli releases files idle-rpg-clean-architecture-demo-frontend@${CIRCLE_SHA1} upload-sourcemaps frontend/build
+      - run: sentry-cli releases finalize idle-rpg-clean-architecture-demo-frontend@${CIRCLE_SHA1}
+workflows:
+  version: "2"
+  build:
+    jobs:
+      - backend-yarn-install
+      - backend-lint:
+          requires:
+            - backend-yarn-install
+      - backend-test:
+          requires:
+            - backend-lint
+      - backend-build:
+          requires:
+            - backend-test
+      - backend-archive:
+          requires:
+            - backend-build
+      - backend-sentry-release:
+          context: sentry
+          requires:
+            - backend-build
+          filters:
+            branches:
+              only:
+                - develop
+                - master
+      - frontend-yarn-install
+      - frontend-lint:
+          requires:
+            - frontend-yarn-install
+      - frontend-build:
+          requires:
+            - frontend-lint
+      - frontend-archive:
+          requires:
+            - frontend-build
+      - frontend-sentry-release:
+          context: sentry
+          requires:
+            - frontend-build
+          filters:
+            branches:
+              only:
+                - develop
+                - master

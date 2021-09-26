@@ -1,0 +1,19 @@
+---
+- import_role:
+    name: build
+  vars:
+    job_name: backend-archive
+    repository_name: haroldcohen/idle-rpg-clean-architecture-demo
+  delegate_to: localhost
+- import_role:
+    name: deploy
+  environment: '{{ backend_env }}'
+  vars:
+    path: /home/backend
+    artifact_path: backend.tar.gz
+    job_name: backend-archive
+    repository_name: haroldcohen/idle-rpg-clean-architecture-demo
+    before_finalize:
+      - ./node_modules/.bin/typeorm migration:run
+    after_finalize:
+      - systemctl restart backend

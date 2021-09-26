@@ -1,0 +1,41 @@
+---
+- import_role:
+    name: postgresql
+  vars:
+    dbs:
+      backend:
+        owner: backend
+    users:
+      backend:
+        password: '{{ backend_database_password }}'
+- import_role:
+    name: nodejs
+  vars:
+    version: 14
+- group:
+    name: backend
+    state: present
+- user:
+    name: backend
+    state: present
+    group: backend
+    shell: /bin/bash
+- import_role:
+    name: envfile
+  vars:
+    owner: backend
+    path: /home/backend/env
+    env: '{{ backend_env }}'
+- name: Configure env
+  lineinfile:
+    path: /home/backend/.bashrc
+    line: set -a; source /home/backend/env; set +a
+- import_role:
+    name: service
+  vars:
+    command: /usr/bin/node /home/backend/current/dist
+    description: backend
+    service: backend
+    user: backend
+    group: backend
+    env: '{{ backend_env }}'

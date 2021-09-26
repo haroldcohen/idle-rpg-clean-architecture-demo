@@ -1,0 +1,19 @@
+---
+- import_role:
+    name: build
+  delegate_to: localhost
+  vars:
+    job_name: frontend-archive
+    repository_name: haroldcohen/idle-rpg-clean-architecture-demo
+- import_role:
+    name: deploy
+  vars:
+    path: /home/frontend
+    artifact_path: frontend.tar.gz
+    before_finalize:
+      - >
+        sed --in-place --expression='s#<div id="root"[^>]*>#<div id="root"
+        {%- for key, value in frontend_data|dictsort %} data-{{ key }}="{{ value }}"{% endfor -%}
+        >#g' build/index.html
+    job_name: frontend-archive
+    repository_name: haroldcohen/idle-rpg-clean-architecture-demo
