@@ -1,5 +1,5 @@
-import Player from '../../domain/player/player';
 import Character from '../../domain/character/character';
+import Player from '../../domain/player/player';
 
 export default class ICreateACharacter {
     async execute(
