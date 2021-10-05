@@ -2,4 +2,5 @@ import CharacterBuilder from "../../../src/core/useCases/character/characterBuil
 
 export class LegolasCharacterBuilder extends CharacterBuilder {
     protected name: string = 'Legolas';
+    protected level!: number;
 }

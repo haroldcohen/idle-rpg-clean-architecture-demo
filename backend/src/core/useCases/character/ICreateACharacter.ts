@@ -6,6 +6,6 @@ export default class ICreateACharacter {
         player: Player,
         name: string,
     ): Promise<Character> {
-        return new Character({ name });
+        return new Character({ name, level: 1 });
     }
 }
