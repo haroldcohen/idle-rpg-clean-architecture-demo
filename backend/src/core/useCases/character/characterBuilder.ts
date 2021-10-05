@@ -5,6 +5,8 @@ export default class CharacterBuilder {
 
     protected level!: number;
 
+    protected rank!: number;
+
     withName(value: string): CharacterBuilder {
         this.name = value;
 
@@ -17,10 +19,15 @@ export default class CharacterBuilder {
         return this;
     }
 
+    withRank(value: number): CharacterBuilder {
+        this.rank = value;
+
+        return this;
+    }
+
     build(): Character {
         return new Character({
             name: this.name,
-            level: this.level,
         });
     }
 }
