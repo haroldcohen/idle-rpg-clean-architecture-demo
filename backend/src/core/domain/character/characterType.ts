@@ -1,3 +1,5 @@
+import Player from '../player/player';
+
 type CharacterType = {
     name: string;
     level: number;
@@ -7,6 +9,7 @@ type CharacterType = {
     attackPoints: number;
     defensePoints: number;
     magikPoints: number;
+    player: Player;
 }
 
 export default CharacterType;
