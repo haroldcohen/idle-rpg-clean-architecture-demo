@@ -1,16 +1,12 @@
 import CharacterType from './characterType';
-import Player from '../player/player';
 
 export default class Character implements CharacterType {
     #name: string;
 
-    #player: Player;
-
     public constructor(
-        { name, player }: { name: string, player: Player},
+        { name }: { name: string },
     ) {
         this.#name = name;
-        this.#player = player;
     }
 
     get name(): string {
@@ -43,9 +39,5 @@ export default class Character implements CharacterType {
 
     get magikPoints(): number {
         return 0;
-    }
-
-    get player(): Player {
-        return this.#player;
     }
 }

@@ -4,8 +4,11 @@ import Player from '../../domain/player/player';
 export default class ICreateACharacter {
     async execute(
         player: Player,
-        name: string,
+        { name } : { name: string },
     ): Promise<Character> {
-        return new Character({ name, player });
+        const createdCharacter = new Character({ name });
+        player.addCharacter(createdCharacter);
+
+        return createdCharacter;
     }
 }

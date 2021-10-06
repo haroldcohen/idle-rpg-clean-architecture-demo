@@ -1,4 +1,4 @@
-import Character from '../../domain/character/character';
+import Character from '../../../src/core/domain/character/character';
 
 export default class CharacterBuilder {
     protected name!: string;
