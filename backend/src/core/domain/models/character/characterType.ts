@@ -1,4 +1,5 @@
 type CharacterType = {
+    id: string;
     name: string;
     level: number;
     rank: number;

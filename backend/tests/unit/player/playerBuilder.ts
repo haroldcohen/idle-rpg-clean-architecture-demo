@@ -1,10 +1,18 @@
-import Player from '../../../src/core/domain/player/player';
-import Character from "../../../src/core/domain/character/character";
+import Player from '../../../src/core/domain/models/player/player';
+import Character from "../../../src/core/domain/models/character/character";
 
 export default class PlayerBuilder {
+    protected id!: string;
+
     protected name!: string;
 
     protected characters!: Character[];
+
+    withId(value: string): PlayerBuilder {
+        this.id = value;
+
+        return this;
+    }
 
     withName(value: string): PlayerBuilder {
         this.name = value;
@@ -20,6 +28,7 @@ export default class PlayerBuilder {
 
     build(): Player {
         return new Player({
+            id: this.id,
             name: this.name,
             characters: this.characters,
         });

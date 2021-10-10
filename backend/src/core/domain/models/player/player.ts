@@ -4,15 +4,22 @@ import CharacterNameAlreadyTakenException from '../character/exceptions/characte
 import PlayerType from './playerType';
 
 export default class Player implements PlayerType {
+    #id: string;
+
     #name: string;
 
     #characters: Character[];
 
     public constructor(
-        { name, characters = [] }: { name: string, characters: Character[] },
+        { id, name, characters = [] }: { id: string, name: string, characters: Character[] },
     ) {
+        this.#id = id;
         this.#name = name;
         this.#characters = characters;
+    }
+
+    get id(): string {
+        return this.#id;
     }
 
     get name(): string {
@@ -23,7 +30,7 @@ export default class Player implements PlayerType {
         return this.#characters;
     }
 
-    addCharacter(character: Character): void {
+    createCharacter(character: Character): void {
         if (this.#characters.length >= 10) {
             throw new CharacterLimitReachedException();
         }

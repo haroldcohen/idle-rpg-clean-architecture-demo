@@ -1,12 +1,26 @@
+import { v4 } from 'uuid';
 import CharacterType from './characterType';
 
 export default class Character implements CharacterType {
+    #id: string;
+
     #name: string;
 
     public constructor(
-        { name }: { name: string },
+        {
+            id,
+            name,
+        }:{
+            id?: string,
+            name: string,
+        },
     ) {
+        this.#id = id || v4();
         this.#name = name;
+    }
+
+    get id(): string {
+        return this.#id;
     }
 
     get name(): string {
