@@ -1,4 +1,4 @@
-import CharacterType from '../../../core/domain/models/character/characterType';
+import CharacterType from '../../../../core/domain/models/character/characterType';
 
 export default class InMemoryCharacter implements CharacterType {
     id: string;

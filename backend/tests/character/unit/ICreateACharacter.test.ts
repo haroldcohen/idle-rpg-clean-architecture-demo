@@ -1,17 +1,17 @@
 import Character from '../../../src/core/domain/models/character/character';
 import ICreateACharacter from '../../../src/core/useCases/character/ICreateACharacter';
-import PlayerBuilder from '../player/playerBuilder';
-import { LegolasCharacterBuilder } from './legolasCharacterBuilder';
-import { verifyCharacter } from './verifyCharacter';
+import PlayerBuilder from '../../player/playerBuilder';
+import { LegolasCharacterBuilder } from '../legolasCharacterBuilder';
+import { verifyCharacter } from '../verifyCharacter';
 import Player from '../../../src/core/domain/models/player/player';
 import CharacterLimitReachedException
     from '../../../src/core/domain/models/character/exceptions/characterLimitReachedException';
-import CharacterBuilder from "./characterBuilder";
+import CharacterBuilder from "../characterBuilder";
 import CharacterNameAlreadyTakenException
     from '../../../src/core/domain/models/character/exceptions/characterNameAlreadyTakenException';
 import { CharacterRepositoryInterface } from '../../../src/core/useCases/character/interfaces/characterRepositoryInterface';
-import InMemoryCharacterRepository from '../../../src/adapters/secondaries/inMemory/inMemoryCharacterRepository';
-import InMemoryCharacter from '../../../src/adapters/secondaries/inMemory/inMemoryCharacter';
+import InMemoryCharacterRepository from '../../../src/adapters/secondaries/inMemory/character/inMemoryCharacterRepository';
+import InMemoryCharacter from '../../../src/adapters/secondaries/inMemory/character/inMemoryCharacter';
 
 
 describe('As a Player, I can create a character.', () => {

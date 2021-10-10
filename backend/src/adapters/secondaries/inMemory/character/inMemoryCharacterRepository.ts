@@ -1,6 +1,6 @@
-import Character from '../../../core/domain/models/character/character';
-import CharacterType from '../../../core/domain/models/character/characterType';
-import { CharacterRepositoryInterface } from '../../../core/useCases/character/interfaces/characterRepositoryInterface';
+import Character from '../../../../core/domain/models/character/character';
+import CharacterType from '../../../../core/domain/models/character/characterType';
+import { CharacterRepositoryInterface } from '../../../../core/useCases/character/interfaces/characterRepositoryInterface';
 import InMemoryCharacter from './inMemoryCharacter';
 
 export default class InMemoryCharacterRepository implements CharacterRepositoryInterface {
