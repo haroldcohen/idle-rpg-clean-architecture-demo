@@ -1,4 +1,4 @@
 .idea
 /.env
-/docker-compose.override.yaml
+docker-compose.override.yaml
 /*/node_modules/
