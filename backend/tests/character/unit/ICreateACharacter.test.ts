@@ -18,11 +18,13 @@ import CharacterDoesNotHaveEnoughSkillPointsException
     from '../../../src/core/domain/models/character/exceptions/characterDoesNotHaveEnoughSkillPointsException';
 import CharacterNameLengthException
     from '../../../src/core/domain/models/character/exceptions/characterNameLengthException';
+import InMemoryPlayerRepository from "../../../src/adapters/secondaries/inMemory/player/inMemoryPlayerRepository";
 
 
 describe('As a Player, I can create a character that starts at' +
     'level 1, rank 1 with 12 SP, 10 HP, 0 AP, 0 DP, 0 MP.', () => {
     var player: Player;
+    var playerRepository: InMemoryPlayerRepository;
     var expectedCharacter: Character;
     var inMemoryCharactersList: InMemoryCharacter[];
     var characterRepository: CharacterRepositoryInterface;
@@ -31,9 +33,12 @@ describe('As a Player, I can create a character that starts at' +
     beforeEach(() => {
         player = new PlayerBuilder()
             .withId('1')
-            .withName('PlayerOne')
             .build();
-        expectedCharacter = new LegolasCharacterBuilder().build();
+        playerRepository = new InMemoryPlayerRepository([]);
+        playerRepository.create(player);
+        expectedCharacter = new LegolasCharacterBuilder()
+            .withPlayerId('1')
+            .build();
         inMemoryCharactersList = [];
         characterRepository = new InMemoryCharacterRepository(inMemoryCharactersList);
         iCreateACharacterExecutionParameters = {
@@ -46,7 +51,7 @@ describe('As a Player, I can create a character that starts at' +
     });
 
     it('When I create a character, it has 10 HP and 12 SP remaining.', async () => {
-        const createdCharacter: Character = await new ICreateACharacter(characterRepository).execute(player, iCreateACharacterExecutionParameters);
+        const createdCharacter: Character = await new ICreateACharacter(characterRepository, playerRepository).execute(player.id, iCreateACharacterExecutionParameters);
         expectedCharacter = new LegolasCharacterBuilder()
             .withHealthPoints(10)
             .withSkillPoints(12)
@@ -67,7 +72,7 @@ describe('As a Player, I can create a character that starts at' +
             defensePoints: 1,
             magikPoints: 1,
         };
-        const createdCharacter: Character = await new ICreateACharacter(characterRepository).execute(player, iCreateACharacterExecutionParameters);
+        const createdCharacter: Character = await new ICreateACharacter(characterRepository, playerRepository).execute(player.id, iCreateACharacterExecutionParameters);
         expectedCharacter = new LegolasCharacterBuilder()
             .withHealthPoints(11)
             .withSkillPoints(8)
@@ -87,7 +92,7 @@ describe('As a Player, I can create a character that starts at' +
             defensePoints: 0,
             magikPoints: 0,
         };
-        const createdCharacter: Character = await new ICreateACharacter(characterRepository).execute(player, iCreateACharacterExecutionParameters);
+        const createdCharacter: Character = await new ICreateACharacter(characterRepository, playerRepository).execute(player.id, iCreateACharacterExecutionParameters);
         expectedCharacter = new LegolasCharacterBuilder()
             .withHealthPoints(11)
             .withAttackPoints(8)
@@ -106,40 +111,44 @@ describe('As a Player, I can create a character that starts at' +
             magikPoints: 0,
         };
         await expect(
-            new ICreateACharacter(characterRepository).execute(player, iCreateACharacterExecutionParameters)
+            new ICreateACharacter(characterRepository, playerRepository).execute(player.id, iCreateACharacterExecutionParameters)
         ).rejects.toThrow(CharacterDoesNotHaveEnoughSkillPointsException);
     });
 
     it('When I try to create an eleventh character, I receive an error.', async () => {
         player = new PlayerBuilder()
-            .withName('PlayerOne')
+            .withId('1')
             .withCharacters([
-                new CharacterBuilder().withName('Frodo').build(),
-                new CharacterBuilder().withName('Samwise').build(),
-                new CharacterBuilder().withName('Pippin').build(),
-                new CharacterBuilder().withName('Merry').build(),
-                new CharacterBuilder().withName('Aragorn').build(),
-                new CharacterBuilder().withName('Legolas').build(),
-                new CharacterBuilder().withName('Gimli').build(),
-                new CharacterBuilder().withName('Aragorn').build(),
-                new CharacterBuilder().withName('Boromir').build(),
-                new CharacterBuilder().withName('Gandalf').build(),
+                new CharacterBuilder().withName('Frodo').withPlayerId('1').build(),
+                new CharacterBuilder().withName('Samwise').withPlayerId('1').build(),
+                new CharacterBuilder().withName('Pippin').withPlayerId('1').build(),
+                new CharacterBuilder().withName('Merry').withPlayerId('1').build(),
+                new CharacterBuilder().withName('Aragorn').withPlayerId('1').build(),
+                new CharacterBuilder().withName('Legolas').withPlayerId('1').build(),
+                new CharacterBuilder().withName('Gimli').withPlayerId('1').build(),
+                new CharacterBuilder().withName('Aragorn').withPlayerId('1').build(),
+                new CharacterBuilder().withName('Boromir').withPlayerId('1').build(),
+                new CharacterBuilder().withName('Gandalf').withPlayerId('1').build(),
             ])
             .build();
+        playerRepository = new InMemoryPlayerRepository([]);
+        await playerRepository.create(player);
         await expect(
-            new ICreateACharacter(characterRepository).execute(player, iCreateACharacterExecutionParameters)
+            new ICreateACharacter(characterRepository, playerRepository).execute(player.id, iCreateACharacterExecutionParameters)
         ).rejects.toThrow(CharacterLimitReachedException);
     });
 
     it('When I try to use the same name twice, I receive an error.', async () => {
         player = new PlayerBuilder()
-            .withName('PlayerOne')
+            .withId('1')
             .withCharacters([
-                new LegolasCharacterBuilder().build(),
+                new LegolasCharacterBuilder().withPlayerId('1').build(),
             ])
             .build();
+        playerRepository = new InMemoryPlayerRepository([]);
+        await playerRepository.create(player);
         await expect(
-            new ICreateACharacter(characterRepository).execute(player, iCreateACharacterExecutionParameters)
+            new ICreateACharacter(characterRepository, playerRepository).execute(player.id, iCreateACharacterExecutionParameters)
         ).rejects.toThrow(CharacterNameAlreadyTakenException);
     });
 
@@ -152,10 +161,10 @@ describe('As a Player, I can create a character that starts at' +
             magikPoints: 1,
         };
         player = new PlayerBuilder()
-            .withName('PlayerOne')
+            .withId('1')
             .build();
         await expect(
-            new ICreateACharacter(characterRepository).execute(player, iCreateACharacterExecutionParameters)
+            new ICreateACharacter(characterRepository, playerRepository).execute(player.id, iCreateACharacterExecutionParameters)
         ).rejects.toThrow(CharacterNameLengthException);
     });
 });

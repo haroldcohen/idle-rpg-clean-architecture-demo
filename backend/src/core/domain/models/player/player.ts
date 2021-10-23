@@ -1,29 +1,21 @@
 import Character from '../character/character';
 import CharacterLimitReachedException from '../character/exceptions/characterLimitReachedException';
 import CharacterNameAlreadyTakenException from '../character/exceptions/characterNameAlreadyTakenException';
-import PlayerType from './playerType';
 
-export default class Player implements PlayerType {
+export default class Player {
     #id: string;
-
-    #name: string;
 
     #characters: Character[];
 
     public constructor(
-        { id, name, characters = [] }: { id: string, name: string, characters: Character[] },
+        { id, characters = [] }: { id: string, characters: Character[] },
     ) {
         this.#id = id;
-        this.#name = name;
         this.#characters = characters;
     }
 
     get id(): string {
         return this.#id;
-    }
-
-    get name(): string {
-        return this.#name;
     }
 
     get characters(): Character[] {

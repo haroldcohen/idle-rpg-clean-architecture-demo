@@ -13,6 +13,8 @@ export default class CharacterBuilder {
 
     protected magikPoints!: number;
 
+    protected playerId!: string;
+
     withName(value: string): CharacterBuilder {
         this.name = value;
 
@@ -49,6 +51,12 @@ export default class CharacterBuilder {
         return this;
     }
 
+    withPlayerId(value: string): CharacterBuilder {
+        this.playerId = value;
+
+        return this;
+    }
+
     build(): Character {
         return new Character({
             name: this.name,
@@ -57,6 +65,7 @@ export default class CharacterBuilder {
             attackPoints: this.attackPoints || 0,
             defensePoints: this.defensePoints || 0,
             magikPoints: this.magikPoints || 0,
+            playerId: this.playerId
         });
     }
 }

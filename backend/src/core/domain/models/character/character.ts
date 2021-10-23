@@ -18,6 +18,8 @@ export default class Character {
 
     #magikPoints: number;
 
+    #playerId: string;
+
     public constructor(
         {
             id,
@@ -27,6 +29,7 @@ export default class Character {
             attackPoints,
             defensePoints,
             magikPoints,
+            playerId,
         }:{
             id?: string,
             name: string,
@@ -35,6 +38,7 @@ export default class Character {
             attackPoints: number,
             defensePoints: number,
             magikPoints: number,
+            playerId: string,
         },
     ) {
         this.#id = id || v4();
@@ -44,6 +48,7 @@ export default class Character {
         this.#attackPoints = attackPoints;
         this.#defensePoints = defensePoints;
         this.#magikPoints = magikPoints;
+        this.#playerId = playerId;
         if (this.#name.length > 25) {
             throw new CharacterNameLengthException();
         }
@@ -83,6 +88,10 @@ export default class Character {
 
     get magikPoints(): number {
         return this.#magikPoints;
+    }
+
+    get playerId(): string {
+        return this.#playerId;
     }
 
     private spendSkillPoints(skillPointsToSpend: number): void {

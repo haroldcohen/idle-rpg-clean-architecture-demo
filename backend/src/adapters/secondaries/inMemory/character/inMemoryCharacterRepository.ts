@@ -11,7 +11,7 @@ export default class InMemoryCharacterRepository implements CharacterRepositoryI
         this.#characters = characters;
     }
 
-    inMemoryCharacterToCharacter(inMemoryCharacter: InMemoryCharacter): Character {
+    static inMemoryCharacterToCharacter(inMemoryCharacter: InMemoryCharacter): Character {
         return new Character({
             id: inMemoryCharacter.id,
             name: inMemoryCharacter.name,
@@ -20,14 +20,19 @@ export default class InMemoryCharacterRepository implements CharacterRepositoryI
             attackPoints: inMemoryCharacter.attackPoints,
             defensePoints: inMemoryCharacter.defensePoints,
             magikPoints: inMemoryCharacter.magikPoints,
+            playerId: inMemoryCharacter.playerId,
         });
     }
 
-    async create(character: Character, playerId: string): Promise<Character> {
-        const createdCharacter = new InMemoryCharacter(character, playerId);
+    static characterToInMemoryCharacter(character: Character): InMemoryCharacter {
+        return new InMemoryCharacter(character);
+    }
+
+    async create(character: Character): Promise<Character> {
+        const createdCharacter = new InMemoryCharacter(character);
         this.#characters.push(createdCharacter);
 
-        return this.inMemoryCharacterToCharacter(createdCharacter);
+        return InMemoryCharacterRepository.inMemoryCharacterToCharacter(createdCharacter);
     }
 
     async read(characterId: string): Promise<Character> {
@@ -36,10 +41,10 @@ export default class InMemoryCharacterRepository implements CharacterRepositoryI
             throw Error('Character does not exist');
         }
 
-        return this.inMemoryCharacterToCharacter(filtered);
+        return InMemoryCharacterRepository.inMemoryCharacterToCharacter(filtered);
     }
 
     async all(): Promise<Character[]> {
-        return this.#characters.map((inMemoryCharacter) => this.inMemoryCharacterToCharacter(inMemoryCharacter));
+        return this.#characters.map((inMemoryCharacter) => InMemoryCharacterRepository.inMemoryCharacterToCharacter(inMemoryCharacter));
     }
 }

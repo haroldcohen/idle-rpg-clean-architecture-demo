@@ -7,7 +7,7 @@ import PSQLPlayer from '../player/PSQLPlayer';
 import PSQLCharacter from './PSQLCharacter';
 
 export default class PSQLCharacterRepository implements CharacterRepositoryInterface {
-    PSQLCharacterToCharacter(pSQLCharacter: PSQLCharacter): Character {
+    static PSQLCharacterToCharacter(pSQLCharacter: PSQLCharacter): Character {
         return new Character({
             id: pSQLCharacter.id,
             name: pSQLCharacter.name,
@@ -16,6 +16,7 @@ export default class PSQLCharacterRepository implements CharacterRepositoryInter
             attackPoints: pSQLCharacter.attackPoints,
             defensePoints: pSQLCharacter.defensePoints,
             magikPoints: pSQLCharacter.magikPoints,
+            playerId: pSQLCharacter.player.id,
         });
     }
 
@@ -34,19 +35,23 @@ export default class PSQLCharacterRepository implements CharacterRepositoryInter
             .create(PSQLCharacterToCreate)
             .save();
 
-        return this.PSQLCharacterToCharacter(createdPSQLCharacter);
+        return PSQLCharacterRepository.PSQLCharacterToCharacter(createdPSQLCharacter);
     }
 
     async read(characterId: string): Promise<Character> {
-        const retrievedCharacter = await getRepository(PSQLCharacter).findOneOrFail(characterId);
+        const retrievedCharacter = await getRepository(PSQLCharacter)
+            .createQueryBuilder('character')
+            .leftJoinAndSelect('character.player', 'player')
+            .where('character.id = :characterId', { characterId })
+            .getOneOrFail();
 
-        return this.PSQLCharacterToCharacter(retrievedCharacter);
+        return PSQLCharacterRepository.PSQLCharacterToCharacter(retrievedCharacter);
     }
 
     async all(): Promise<Character[]> {
         const retrievedCharacters = await getRepository(PSQLCharacter)
             .createQueryBuilder().getMany();
 
-        return retrievedCharacters.map((c) => this.PSQLCharacterToCharacter(c));
+        return retrievedCharacters.map((c) => PSQLCharacterRepository.PSQLCharacterToCharacter(c));
     }
 }

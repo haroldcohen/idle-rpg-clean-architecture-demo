@@ -8,10 +8,10 @@ import ICreateACharacterExecutionParametersType
 import PlayerBuilder from '../../player/playerBuilder';
 import { LegolasCharacterBuilder } from '../legolasCharacterBuilder';
 import PSQLCharacterRepository from '../../../src/adapters/secondaries/PSQL/character/PSQLCharacterRepository';
-import ICreateACharacter from "../../../src/core/useCases/character/ICreateACharacter";
-import {verifyCharacter} from "../verifyCharacter";
-import PSQLCharacter from "../../../src/adapters/secondaries/PSQL/character/PSQLCharacter";
-import PSQLPlayer from "../../../src/adapters/secondaries/PSQL/player/PSQLPlayer";
+import ICreateACharacter from '../../../src/core/useCases/character/ICreateACharacter';
+import {verifyCharacter} from '../verifyCharacter';
+import PSQLPlayer from '../../../src/adapters/secondaries/PSQL/player/PSQLPlayer';
+import PSQLPlayerRepository from '../../../src/adapters/secondaries/PSQL/player/PSQLPlayerRepository';
 
 describe('As a Player, I can create a character that starts at' +
     'level 1, rank 1 with 12 SP, 10 HP, 0 AP, 0 DP, 0 MP.', () => {
@@ -19,6 +19,7 @@ describe('As a Player, I can create a character that starts at' +
     var player: Player;
     var expectedCharacter: Character;
     var characterRepository: PSQLCharacterRepository;
+    var playerRepository: PSQLPlayerRepository;
     var iCreateACharacterExecutionParameters: ICreateACharacterExecutionParametersType;
 
     beforeAll(async () => {
@@ -35,12 +36,12 @@ describe('As a Player, I can create a character that starts at' +
         await connection.synchronize(true);
         player = new PlayerBuilder()
             .withId(v4())
-            .withName('PlayerOne')
             .build();
         const pSQLPlayer = new PSQLPlayer(player.id);
         await getRepository(PSQLPlayer)
             .create(pSQLPlayer)
             .save();
+        playerRepository = new PSQLPlayerRepository();
         expectedCharacter = new LegolasCharacterBuilder().build();
         characterRepository = new PSQLCharacterRepository();
         iCreateACharacterExecutionParameters = {
@@ -53,7 +54,7 @@ describe('As a Player, I can create a character that starts at' +
     });
 
     it('When I create a character, it has 10 HP and 12 SP remaining.', async () => {
-        const createdCharacter = await new ICreateACharacter(characterRepository).execute(player, iCreateACharacterExecutionParameters);
+        const createdCharacter = await new ICreateACharacter(characterRepository, playerRepository).execute(player.id, iCreateACharacterExecutionParameters);
         expectedCharacter = new LegolasCharacterBuilder()
             .withHealthPoints(10)
             .withSkillPoints(12)

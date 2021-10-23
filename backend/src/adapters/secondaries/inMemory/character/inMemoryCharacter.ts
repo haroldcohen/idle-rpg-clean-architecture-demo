@@ -29,6 +29,7 @@ export default class InMemoryCharacter {
         attackPoints,
         defensePoints,
         magikPoints,
+        playerId,
     }:{
         id: string,
         name: string,
@@ -38,8 +39,9 @@ export default class InMemoryCharacter {
         healthPoints: number,
         attackPoints: number,
         defensePoints: number,
-        magikPoints: number
-    }, playerId: string) {
+        magikPoints: number,
+        playerId: string,
+    }) {
         this.id = id;
         this.name = name;
         this.level = level;
