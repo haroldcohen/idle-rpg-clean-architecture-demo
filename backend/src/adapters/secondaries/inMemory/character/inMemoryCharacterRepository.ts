@@ -1,6 +1,7 @@
 import Character from '../../../../core/domain/models/character/character';
-import CharacterType from '../../../../core/domain/models/character/characterType';
-import { CharacterRepositoryInterface } from '../../../../core/useCases/character/interfaces/characterRepositoryInterface';
+import {
+    CharacterRepositoryInterface
+} from '../../../../core/useCases/character/interfaces/characterRepositoryInterface';
 import InMemoryCharacter from './inMemoryCharacter';
 
 export default class InMemoryCharacterRepository implements CharacterRepositoryInterface {
@@ -14,10 +15,15 @@ export default class InMemoryCharacterRepository implements CharacterRepositoryI
         return new Character({
             id: inMemoryCharacter.id,
             name: inMemoryCharacter.name,
+            skillPoints: inMemoryCharacter.skillPoints,
+            healthPoints: inMemoryCharacter.healthPoints,
+            attackPoints: inMemoryCharacter.attackPoints,
+            defensePoints: inMemoryCharacter.defensePoints,
+            magikPoints: inMemoryCharacter.magikPoints,
         });
     }
 
-    create(character: CharacterType, playerId: string): Character {
+    create(character: Character, playerId: string): Character {
         const createdCharacter = new InMemoryCharacter(character, playerId);
         this.#characters.push(createdCharacter);
 
@@ -34,9 +40,6 @@ export default class InMemoryCharacterRepository implements CharacterRepositoryI
     }
 
     all(): Character[] {
-        return this.#characters.map((inMemoryCharacter) => new Character({
-            id: inMemoryCharacter.id,
-            name: inMemoryCharacter.name,
-        }));
+        return this.#characters.map((inMemoryCharacter) => this.inMemoryCharacterToCharacter(inMemoryCharacter));
     }
 }

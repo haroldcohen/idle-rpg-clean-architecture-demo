@@ -30,13 +30,12 @@ export default class Player implements PlayerType {
         return this.#characters;
     }
 
-    createCharacter(character: Character): void {
+    playerCanCreateCharacterOrDie(character: Character): void {
         if (this.#characters.length >= 10) {
             throw new CharacterLimitReachedException();
         }
         if (this.#characters.filter((c) => c.name === character.name).length) {
             throw new CharacterNameAlreadyTakenException();
         }
-        this.#characters.push(character);
     }
 }
