@@ -15,13 +15,20 @@ export default class ICreateACharacter {
         executionParams: ICreateACharacterExecutionParametersType,
     ): Promise<Character> {
         const { name, healthPoints, attackPoints, defensePoints, magikPoints } = executionParams;
-        const createdCharacter = new Character({ name });
+        const createdCharacter = new Character({
+            name,
+            skillPoints: 12,
+            healthPoints: 10,
+            attackPoints: 0,
+            defensePoints: 0,
+            magikPoints: 0,
+        });
         createdCharacter.levelUpHealthPoints(healthPoints);
         createdCharacter.levelUpAttackPoints(attackPoints);
         createdCharacter.levelUpDefensePoints(defensePoints);
         createdCharacter.levelUpMagikPoints(magikPoints);
         player.playerCanCreateCharacterOrDie(createdCharacter);
-        this.#characterRepository.create(createdCharacter, player.id);
+        await this.#characterRepository.create(createdCharacter, player.id);
 
         return createdCharacter;
     }

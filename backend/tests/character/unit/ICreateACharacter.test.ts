@@ -16,6 +16,8 @@ import ICreateACharacterExecutionParametersType
     from '../../../src/core/useCases/character/types/ICreateACharacterExecutionParametersType';
 import CharacterDoesNotHaveEnoughSkillPointsException
     from '../../../src/core/domain/models/character/exceptions/characterDoesNotHaveEnoughSkillPointsException';
+import CharacterNameLengthException
+    from '../../../src/core/domain/models/character/exceptions/characterNameLengthException';
 
 
 describe('As a Player, I can create a character that starts at' +
@@ -43,15 +45,18 @@ describe('As a Player, I can create a character that starts at' +
         };
     });
 
-    it('When I create a character I have 10 HP and 12 SP remaining.', async () => {
+    it('When I create a character, it has 10 HP and 12 SP remaining.', async () => {
         const createdCharacter: Character = await new ICreateACharacter(characterRepository).execute(player, iCreateACharacterExecutionParameters);
         expectedCharacter = new LegolasCharacterBuilder()
             .withHealthPoints(10)
             .withSkillPoints(12)
             .build();
+        expect(createdCharacter.rank).toEqual(1);
+        expect(createdCharacter.level).toEqual(1);
         verifyCharacter(createdCharacter, expectedCharacter);
-        verifyCharacter(createdCharacter, characterRepository.read(createdCharacter.id));
-        expect(characterRepository.all().map((c) => c.id)).toContain(createdCharacter.id);
+        verifyCharacter(createdCharacter, await characterRepository.read(createdCharacter.id));
+        const allRetrievedCharacters = await characterRepository.all();
+        expect(allRetrievedCharacters.map((c) => c.id)).toContain(createdCharacter.id);
     });
 
     it('When I create a character with 11 HP and 1 AP, 1 DP and 1 MP I have 8 SP left.', async () => {
@@ -71,7 +76,7 @@ describe('As a Player, I can create a character that starts at' +
             .withMagikPoints(1)
             .build();
         verifyCharacter(createdCharacter, expectedCharacter);
-        verifyCharacter(createdCharacter, characterRepository.read(createdCharacter.id));
+        verifyCharacter(createdCharacter, await characterRepository.read(createdCharacter.id));
     });
 
     it('When I create a character with 11 HP and 8 AP, I have 1 SP left.', async () => {
@@ -89,7 +94,7 @@ describe('As a Player, I can create a character that starts at' +
             .withSkillPoints(1)
             .build();
         verifyCharacter(createdCharacter, expectedCharacter);
-        verifyCharacter(createdCharacter, characterRepository.read(createdCharacter.id));
+        verifyCharacter(createdCharacter, await characterRepository.read(createdCharacter.id));
     });
 
     it('When I create a character with more than 12 SP distributed, I receive an error.', async () => {
@@ -136,5 +141,21 @@ describe('As a Player, I can create a character that starts at' +
         await expect(
             new ICreateACharacter(characterRepository).execute(player, iCreateACharacterExecutionParameters)
         ).rejects.toThrow(CharacterNameAlreadyTakenException);
+    });
+
+    it('When I try to create a character with a name longer than 25 characters, I receive an error.', async () => {
+        iCreateACharacterExecutionParameters = {
+            name: 'Aragorn son of Arathorn, heir of Isildur',
+            healthPoints: 11,
+            attackPoints: 1,
+            defensePoints: 1,
+            magikPoints: 1,
+        };
+        player = new PlayerBuilder()
+            .withName('PlayerOne')
+            .build();
+        await expect(
+            new ICreateACharacter(characterRepository).execute(player, iCreateACharacterExecutionParameters)
+        ).rejects.toThrow(CharacterNameLengthException);
     });
 });

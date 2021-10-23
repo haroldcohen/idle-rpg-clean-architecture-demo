@@ -1,6 +1,7 @@
 import { v4 } from 'uuid';
 import CharacterDoesNotHaveEnoughSkillPointsException
-    from "./exceptions/characterDoesNotHaveEnoughSkillPointsException";
+    from './exceptions/characterDoesNotHaveEnoughSkillPointsException';
+import CharacterNameLengthException from './exceptions/characterNameLengthException';
 
 export default class Character {
     #id: string;
@@ -17,8 +18,6 @@ export default class Character {
 
     #magikPoints: number;
 
-    // #incrementalSkillSpendComputer: IncrementalSkillSpendComputer;
-
     public constructor(
         {
             id,
@@ -31,20 +30,23 @@ export default class Character {
         }:{
             id?: string,
             name: string,
-            skillPoints?: number,
-            healthPoints?: number,
-            attackPoints?: number,
-            defensePoints?: number,
-            magikPoints?: number,
+            skillPoints: number,
+            healthPoints: number,
+            attackPoints: number,
+            defensePoints: number,
+            magikPoints: number,
         },
     ) {
         this.#id = id || v4();
         this.#name = name;
-        this.#healthPoints = healthPoints || 10;
-        this.#skillPoints = skillPoints !== undefined ? skillPoints : 12;
-        this.#attackPoints = attackPoints || 0;
-        this.#defensePoints = defensePoints || 0;
-        this.#magikPoints = magikPoints || 0;
+        this.#healthPoints = healthPoints;
+        this.#skillPoints = skillPoints;
+        this.#attackPoints = attackPoints;
+        this.#defensePoints = defensePoints;
+        this.#magikPoints = magikPoints;
+        if (this.#name.length > 25) {
+            throw new CharacterNameLengthException();
+        }
     }
 
     get id(): string {
@@ -113,7 +115,6 @@ export default class Character {
     }
 
     levelUpAttackPoints(attackPoints: number): void {
-
         if (attackPoints > this.#attackPoints) {
             this.spendSkillPoints(Character.computeSkillPointsToSpend(this.#attackPoints, attackPoints));
             this.#attackPoints = attackPoints;

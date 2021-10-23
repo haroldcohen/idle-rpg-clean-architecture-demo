@@ -1,6 +1,6 @@
 import Character from '../../../../core/domain/models/character/character';
 import {
-    CharacterRepositoryInterface
+    CharacterRepositoryInterface,
 } from '../../../../core/useCases/character/interfaces/characterRepositoryInterface';
 import InMemoryCharacter from './inMemoryCharacter';
 
@@ -23,14 +23,14 @@ export default class InMemoryCharacterRepository implements CharacterRepositoryI
         });
     }
 
-    create(character: Character, playerId: string): Character {
+    async create(character: Character, playerId: string): Promise<Character> {
         const createdCharacter = new InMemoryCharacter(character, playerId);
         this.#characters.push(createdCharacter);
 
         return this.inMemoryCharacterToCharacter(createdCharacter);
     }
 
-    read(characterId: string): Character {
+    async read(characterId: string): Promise<Character> {
         const filtered = this.#characters.filter((c) => c.id === characterId).pop();
         if (!filtered) {
             throw Error('Character does not exist');
@@ -39,7 +39,7 @@ export default class InMemoryCharacterRepository implements CharacterRepositoryI
         return this.inMemoryCharacterToCharacter(filtered);
     }
 
-    all(): Character[] {
+    async all(): Promise<Character[]> {
         return this.#characters.map((inMemoryCharacter) => this.inMemoryCharacterToCharacter(inMemoryCharacter));
     }
 }

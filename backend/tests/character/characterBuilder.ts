@@ -52,11 +52,11 @@ export default class CharacterBuilder {
     build(): Character {
         return new Character({
             name: this.name,
-            skillPoints: this.skillPoints,
-            healthPoints: this.healthPoints,
-            attackPoints: this.attackPoints,
-            defensePoints: this.defensePoints,
-            magikPoints: this.magikPoints,
+            skillPoints: this.skillPoints || 12,
+            healthPoints: this.healthPoints || 10,
+            attackPoints: this.attackPoints || 0,
+            defensePoints: this.defensePoints || 0,
+            magikPoints: this.magikPoints || 0,
         });
     }
 }

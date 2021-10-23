@@ -1,8 +1,7 @@
 import Character from '../../../domain/models/character/character';
-import CharacterType from '../../../domain/models/character/characterType';
 
 export interface CharacterRepositoryInterface {
-    create(character: CharacterType, playerId: string): Character;
-    read(characterId: string): Character;
-    all(): Character[];
+    create(character: Character, playerId: string): Promise<Character>;
+    read(characterId: string): Promise<Character>;
+    all(): Promise<Character[]>;
 }
