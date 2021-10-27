@@ -9,7 +9,7 @@ import PlayerBuilder from '../../player/playerBuilder';
 import { LegolasCharacterBuilder } from '../legolasCharacterBuilder';
 import PSQLCharacterRepository from '../../../src/adapters/secondaries/PSQL/character/PSQLCharacterRepository';
 import ICreateACharacter from '../../../src/core/useCases/character/ICreateACharacter';
-import {verifyCharacter} from '../verifyCharacter';
+import { verifyCharacter } from '../verifyCharacter';
 import PSQLPlayer from '../../../src/adapters/secondaries/PSQL/player/PSQLPlayer';
 import PSQLPlayerRepository from '../../../src/adapters/secondaries/PSQL/player/PSQLPlayerRepository';
 
@@ -29,7 +29,7 @@ describe('As a Player, I can create a character that starts at' +
 
     afterAll(async () => {
         await connection.dropDatabase();
-        await connection.close()
+        await connection.close();
     });
 
     beforeEach(async () => {
