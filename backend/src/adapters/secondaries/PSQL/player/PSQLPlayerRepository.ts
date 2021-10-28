@@ -1,9 +1,11 @@
+import { injectable } from 'inversify';
 import { getRepository } from 'typeorm';
 import Player from '../../../../core/domain/models/player/player';
 import { PlayerRepositoryInterface } from '../../../../core/useCases/player/interfaces/playerRepositoryInterface';
 import PSQLCharacterRepository from '../character/PSQLCharacterRepository';
 import PSQLPlayer from './PSQLPlayer';
 
+@injectable()
 export default class PSQLPlayerRepository implements PlayerRepositoryInterface {
     static PSQLPlayerToPlayer(pSQLPlayer: PSQLPlayer): Player {
         return new Player({

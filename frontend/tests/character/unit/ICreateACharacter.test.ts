@@ -13,7 +13,6 @@ describe('As a player, I can create a character', () => {
 
     it('That starts at level 1, rank 1 with 12 SP, 10 HP, 0 AP, 0 DP, 0 MP.', async () => {
         const createdCharacter = await new ICreateACharacter().execute();
-        expect(createdCharacter).toBeInstanceOf(Character);
         expect(createdCharacter.level).toEqual(1);
         expect(createdCharacter.rank).toEqual(1);
         expect(createdCharacter.skillPoints).toEqual(12);

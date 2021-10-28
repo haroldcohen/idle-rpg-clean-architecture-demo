@@ -1,7 +1,7 @@
 import Character from '../../domain/models/character/character';
 import { PlayerRepositoryInterface } from '../player/interfaces/playerRepositoryInterface';
 import { CharacterRepositoryInterface } from './interfaces/characterRepositoryInterface';
-import ICreateACharacterExecutionParametersType from './types/ICreateACharacterExecutionParametersType';
+import ICreateACharacterCommand from './types/ICreateACharacterCommand';
 
 export default class ICreateACharacter {
     #characterRepository: CharacterRepositoryInterface;
@@ -18,7 +18,7 @@ export default class ICreateACharacter {
 
     async execute(
         playerId: string,
-        executionParams: ICreateACharacterExecutionParametersType,
+        executionParams: ICreateACharacterCommand,
     ): Promise<Character> {
         const { name, healthPoints, attackPoints, defensePoints, magikPoints } = executionParams;
         const createdCharacter = new Character({
@@ -36,7 +36,7 @@ export default class ICreateACharacter {
         createdCharacter.levelUpMagikPoints(magikPoints);
         const player = await this.#playerRepository.read(playerId);
         player.playerCanCreateCharacterOrDie(createdCharacter);
-        await this.#characterRepository.create(createdCharacter, player.id);
+        await this.#characterRepository.create(createdCharacter);
 
         return createdCharacter;
     }

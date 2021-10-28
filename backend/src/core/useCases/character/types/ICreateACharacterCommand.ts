@@ -1,4 +1,4 @@
-type ICreateACharacterExecutionParametersType = {
+type ICreateACharacterCommand = {
     name: string;
     healthPoints: number;
     attackPoints: number;
@@ -6,4 +6,4 @@ type ICreateACharacterExecutionParametersType = {
     magikPoints: number;
 }
 
-export default ICreateACharacterExecutionParametersType;
+export default ICreateACharacterCommand;

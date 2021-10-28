@@ -1,3 +1,5 @@
+// import 'reflect-metadata';
+import { injectable } from 'inversify';
 import { getRepository } from 'typeorm';
 import Character from '../../../../core/domain/models/character/character';
 import {
@@ -6,6 +8,7 @@ import {
 import PSQLPlayer from '../player/PSQLPlayer';
 import PSQLCharacter from './PSQLCharacter';
 
+@injectable()
 export default class PSQLCharacterRepository implements CharacterRepositoryInterface {
     static PSQLCharacterToCharacter(pSQLCharacter: PSQLCharacter): Character {
         return new Character({
@@ -20,7 +23,7 @@ export default class PSQLCharacterRepository implements CharacterRepositoryInter
         });
     }
 
-    async create(character: Character, playerId: string): Promise<Character> {
+    async create(character: Character): Promise<Character> {
         const PSQLCharacterToCreate = new PSQLCharacter(
             character.id,
             character.name,
@@ -29,7 +32,7 @@ export default class PSQLCharacterRepository implements CharacterRepositoryInter
             character.attackPoints,
             character.defensePoints,
             character.magikPoints,
-            new PSQLPlayer(playerId),
+            new PSQLPlayer(character.playerId),
         );
         const createdPSQLCharacter = await getRepository(PSQLCharacter)
             .create(PSQLCharacterToCreate)

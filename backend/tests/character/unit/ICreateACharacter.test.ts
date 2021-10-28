@@ -12,8 +12,8 @@ import CharacterNameAlreadyTakenException
 import { CharacterRepositoryInterface } from '../../../src/core/useCases/character/interfaces/characterRepositoryInterface';
 import InMemoryCharacterRepository from '../../../src/adapters/secondaries/inMemory/character/inMemoryCharacterRepository';
 import InMemoryCharacter from '../../../src/adapters/secondaries/inMemory/character/inMemoryCharacter';
-import ICreateACharacterExecutionParametersType
-    from '../../../src/core/useCases/character/types/ICreateACharacterExecutionParametersType';
+import ICreateACharacterCommand
+    from '../../../src/core/useCases/character/types/ICreateACharacterCommand';
 import CharacterDoesNotHaveEnoughSkillPointsException
     from '../../../src/core/domain/models/character/exceptions/characterDoesNotHaveEnoughSkillPointsException';
 import CharacterNameLengthException
@@ -28,7 +28,7 @@ describe('As a Player, I can create a character that starts at' +
     var expectedCharacter: Character;
     var inMemoryCharactersList: InMemoryCharacter[];
     var characterRepository: CharacterRepositoryInterface;
-    var iCreateACharacterExecutionParameters: ICreateACharacterExecutionParametersType;
+    var iCreateACharacterExecutionParameters: ICreateACharacterCommand;
 
     beforeEach(() => {
         player = new PlayerBuilder()

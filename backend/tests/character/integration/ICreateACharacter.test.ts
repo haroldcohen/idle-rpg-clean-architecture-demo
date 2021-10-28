@@ -3,8 +3,8 @@ import {Connection, createConnection, getRepository} from 'typeorm';
 import config from '../../../src/configuration/database/config';
 import Player from '../../../src/core/domain/models/player/player';
 import Character from '../../../src/core/domain/models/character/character';
-import ICreateACharacterExecutionParametersType
-    from '../../../src/core/useCases/character/types/ICreateACharacterExecutionParametersType';
+import ICreateACharacterCommand
+    from '../../../src/core/useCases/character/types/ICreateACharacterCommand';
 import PlayerBuilder from '../../player/playerBuilder';
 import { LegolasCharacterBuilder } from '../legolasCharacterBuilder';
 import PSQLCharacterRepository from '../../../src/adapters/secondaries/PSQL/character/PSQLCharacterRepository';
@@ -20,7 +20,7 @@ describe('As a Player, I can create a character that starts at' +
     var expectedCharacter: Character;
     var characterRepository: PSQLCharacterRepository;
     var playerRepository: PSQLPlayerRepository;
-    var iCreateACharacterExecutionParameters: ICreateACharacterExecutionParametersType;
+    var iCreateACharacterCommand: ICreateACharacterCommand;
 
     beforeAll(async () => {
         connection = await createConnection(config);
@@ -44,7 +44,7 @@ describe('As a Player, I can create a character that starts at' +
         playerRepository = new PSQLPlayerRepository();
         expectedCharacter = new LegolasCharacterBuilder().build();
         characterRepository = new PSQLCharacterRepository();
-        iCreateACharacterExecutionParameters = {
+        iCreateACharacterCommand = {
             name: 'Legolas',
             healthPoints: 10,
             attackPoints: 0,
@@ -54,7 +54,7 @@ describe('As a Player, I can create a character that starts at' +
     });
 
     it('When I create a character, it has 10 HP and 12 SP remaining.', async () => {
-        const createdCharacter = await new ICreateACharacter(characterRepository, playerRepository).execute(player.id, iCreateACharacterExecutionParameters);
+        const createdCharacter = await new ICreateACharacter(characterRepository, playerRepository).execute(player.id, iCreateACharacterCommand);
         expectedCharacter = new LegolasCharacterBuilder()
             .withHealthPoints(10)
             .withSkillPoints(12)
