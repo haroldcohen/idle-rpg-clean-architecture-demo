@@ -12,8 +12,7 @@ import CharacterPresenter from '../../presenters/characters/characterPresenter';
 
 const charactersRouter = Router();
 
-charactersRouter.post('/', async (req: Request, res: Response) => {
-    res.status(200);
+charactersRouter.put('/', async (req: Request, res: Response) => {
     const { playerId, name, healthPoints, attackPoints, defensePoints, magikPoints } = req.body;
     const characterRepository = container.get<CharacterRepositoryInterface>(TYPES.CharacterRepositoryInterface);
     const playerRepository = container.get<PlayerRepositoryInterface>(TYPES.PlayerRepositoryInterface);
@@ -24,10 +23,19 @@ charactersRouter.post('/', async (req: Request, res: Response) => {
         defensePoints,
         magikPoints,
     };
-    const createdCharacter = await new ICreateACharacter(characterRepository, playerRepository)
-        .execute(playerId, iCreateACharacterExecutionParameters);
+    try {
+        const createdCharacter = await new ICreateACharacter(characterRepository, playerRepository)
+            .execute(playerId, iCreateACharacterExecutionParameters);
+        res.status(200);
 
-    return res.json(CharacterPresenter.present(createdCharacter));
+        return res.json(CharacterPresenter.present(createdCharacter));
+    } catch (e) {
+        res.status(500);
+
+        return res.json({
+            errorMessage: e.message,
+        });
+    }
 });
 
 export default charactersRouter;

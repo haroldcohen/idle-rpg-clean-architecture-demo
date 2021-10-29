@@ -19,6 +19,7 @@ export default class PSQLPlayerRepository implements PlayerRepositoryInterface {
             .createQueryBuilder('player')
             .where('player.id = :playerId', { playerId })
             .leftJoinAndSelect('player.characters', 'characters')
+            .leftJoinAndSelect('characters.player', 'characterPlayer')
             .getOneOrFail();
 
         return PSQLPlayerRepository.PSQLPlayerToPlayer(retrievedPlayer);

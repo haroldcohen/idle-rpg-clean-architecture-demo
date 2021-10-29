@@ -19,6 +19,8 @@ import CharacterDoesNotHaveEnoughSkillPointsException
 import CharacterNameLengthException
     from '../../../src/core/domain/models/character/exceptions/characterNameLengthException';
 import InMemoryPlayerRepository from "../../../src/adapters/secondaries/inMemory/player/inMemoryPlayerRepository";
+import CharacterSkillMustBePositiveException
+    from "../../../src/core/domain/models/character/exceptions/characterSkillMustBePositiveException";
 
 
 describe('As a Player, I can create a character that starts at' +
@@ -28,7 +30,7 @@ describe('As a Player, I can create a character that starts at' +
     var expectedCharacter: Character;
     var inMemoryCharactersList: InMemoryCharacter[];
     var characterRepository: CharacterRepositoryInterface;
-    var iCreateACharacterExecutionParameters: ICreateACharacterCommand;
+    var iCreateACharacterCommand: ICreateACharacterCommand;
 
     beforeEach(() => {
         player = new PlayerBuilder()
@@ -41,7 +43,7 @@ describe('As a Player, I can create a character that starts at' +
             .build();
         inMemoryCharactersList = [];
         characterRepository = new InMemoryCharacterRepository(inMemoryCharactersList);
-        iCreateACharacterExecutionParameters = {
+        iCreateACharacterCommand = {
             name: 'Legolas',
             healthPoints: 10,
             attackPoints: 0,
@@ -51,7 +53,7 @@ describe('As a Player, I can create a character that starts at' +
     });
 
     it('When I create a character, it has 10 HP and 12 SP remaining.', async () => {
-        const createdCharacter: Character = await new ICreateACharacter(characterRepository, playerRepository).execute(player.id, iCreateACharacterExecutionParameters);
+        const createdCharacter: Character = await new ICreateACharacter(characterRepository, playerRepository).execute(player.id, iCreateACharacterCommand);
         expectedCharacter = new LegolasCharacterBuilder()
             .withHealthPoints(10)
             .withSkillPoints(12)
@@ -65,14 +67,14 @@ describe('As a Player, I can create a character that starts at' +
     });
 
     it('When I create a character with 11 HP and 1 AP, 1 DP and 1 MP I have 8 SP left.', async () => {
-        iCreateACharacterExecutionParameters = {
+        iCreateACharacterCommand = {
             name: 'Legolas',
             healthPoints: 11,
             attackPoints: 1,
             defensePoints: 1,
             magikPoints: 1,
         };
-        const createdCharacter: Character = await new ICreateACharacter(characterRepository, playerRepository).execute(player.id, iCreateACharacterExecutionParameters);
+        const createdCharacter: Character = await new ICreateACharacter(characterRepository, playerRepository).execute(player.id, iCreateACharacterCommand);
         expectedCharacter = new LegolasCharacterBuilder()
             .withHealthPoints(11)
             .withSkillPoints(8)
@@ -85,14 +87,14 @@ describe('As a Player, I can create a character that starts at' +
     });
 
     it('When I create a character with 11 HP and 8 AP, I have 1 SP left.', async () => {
-        iCreateACharacterExecutionParameters = {
+        iCreateACharacterCommand = {
             name: 'Legolas',
             healthPoints: 11,
             attackPoints: 8,
             defensePoints: 0,
             magikPoints: 0,
         };
-        const createdCharacter: Character = await new ICreateACharacter(characterRepository, playerRepository).execute(player.id, iCreateACharacterExecutionParameters);
+        const createdCharacter: Character = await new ICreateACharacter(characterRepository, playerRepository).execute(player.id, iCreateACharacterCommand);
         expectedCharacter = new LegolasCharacterBuilder()
             .withHealthPoints(11)
             .withAttackPoints(8)
@@ -103,7 +105,7 @@ describe('As a Player, I can create a character that starts at' +
     });
 
     it('When I create a character with more than 12 SP distributed, I receive an error.', async () => {
-        iCreateACharacterExecutionParameters = {
+        iCreateACharacterCommand = {
             name: 'Legolas',
             healthPoints: 50,
             attackPoints: 0,
@@ -111,7 +113,7 @@ describe('As a Player, I can create a character that starts at' +
             magikPoints: 0,
         };
         await expect(
-            new ICreateACharacter(characterRepository, playerRepository).execute(player.id, iCreateACharacterExecutionParameters)
+            new ICreateACharacter(characterRepository, playerRepository).execute(player.id, iCreateACharacterCommand)
         ).rejects.toThrow(CharacterDoesNotHaveEnoughSkillPointsException);
     });
 
@@ -134,7 +136,7 @@ describe('As a Player, I can create a character that starts at' +
         playerRepository = new InMemoryPlayerRepository([]);
         await playerRepository.create(player);
         await expect(
-            new ICreateACharacter(characterRepository, playerRepository).execute(player.id, iCreateACharacterExecutionParameters)
+            new ICreateACharacter(characterRepository, playerRepository).execute(player.id, iCreateACharacterCommand)
         ).rejects.toThrow(CharacterLimitReachedException);
     });
 
@@ -148,12 +150,12 @@ describe('As a Player, I can create a character that starts at' +
         playerRepository = new InMemoryPlayerRepository([]);
         await playerRepository.create(player);
         await expect(
-            new ICreateACharacter(characterRepository, playerRepository).execute(player.id, iCreateACharacterExecutionParameters)
+            new ICreateACharacter(characterRepository, playerRepository).execute(player.id, iCreateACharacterCommand)
         ).rejects.toThrow(CharacterNameAlreadyTakenException);
     });
 
     it('When I try to create a character with a name longer than 25 characters, I receive an error.', async () => {
-        iCreateACharacterExecutionParameters = {
+        iCreateACharacterCommand = {
             name: 'Aragorn son of Arathorn, heir of Isildur',
             healthPoints: 11,
             attackPoints: 1,
@@ -164,7 +166,7 @@ describe('As a Player, I can create a character that starts at' +
             .withId('1')
             .build();
         await expect(
-            new ICreateACharacter(characterRepository, playerRepository).execute(player.id, iCreateACharacterExecutionParameters)
+            new ICreateACharacter(characterRepository, playerRepository).execute(player.id, iCreateACharacterCommand)
         ).rejects.toThrow(CharacterNameLengthException);
     });
 });

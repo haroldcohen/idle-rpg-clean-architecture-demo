@@ -8,5 +8,6 @@
         "node": true
     },
     "rules": {
+        "no-return-await": "off"
     }
 }

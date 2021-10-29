@@ -36,8 +36,7 @@ export default class ICreateACharacter {
         createdCharacter.levelUpMagikPoints(magikPoints);
         const player = await this.#playerRepository.read(playerId);
         player.playerCanCreateCharacterOrDie(createdCharacter);
-        await this.#characterRepository.create(createdCharacter);
 
-        return createdCharacter;
+        return await this.#characterRepository.create(createdCharacter);
     }
 }

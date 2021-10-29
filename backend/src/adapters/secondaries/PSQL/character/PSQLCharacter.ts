@@ -1,4 +1,5 @@
-import { BaseEntity, Column, JoinColumn, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
+// eslint-disable-next-line import/no-cycle
 import PSQLPlayer from '../player/PSQLPlayer';
 
 @Entity('characters')
@@ -7,22 +8,22 @@ export default class PSQLCharacter extends BaseEntity {
     public id: string;
 
     @Column('varchar', { length: 25 })
-    public name!: string;
+    public name: string;
 
     @Column('integer')
-    public skillPoints!: number;
+    public skillPoints: number;
 
     @Column('integer')
-    public healthPoints!: number;
+    public healthPoints: number;
 
     @Column('integer')
-    public attackPoints!: number;
+    public attackPoints: number;
 
     @Column('integer')
-    public defensePoints!: number;
+    public defensePoints: number;
 
     @Column('integer')
-    public magikPoints!: number;
+    public magikPoints: number;
 
     @ManyToOne(() => PSQLPlayer, (player: PSQLPlayer) => player.characters)
     public player: PSQLPlayer;
