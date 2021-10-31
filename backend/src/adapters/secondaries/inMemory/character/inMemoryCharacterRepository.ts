@@ -45,6 +45,8 @@ export default class InMemoryCharacterRepository implements CharacterRepositoryI
     }
 
     async all(): Promise<Character[]> {
-        return this.#characters.map((inMemoryCharacter) => InMemoryCharacterRepository.inMemoryCharacterToCharacter(inMemoryCharacter));
+        return this.#characters.map(
+            (inMemoryCharacter) => InMemoryCharacterRepository.inMemoryCharacterToCharacter(inMemoryCharacter),
+        );
     }
 }

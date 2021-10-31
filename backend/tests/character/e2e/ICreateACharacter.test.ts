@@ -11,13 +11,15 @@ import {v4} from "uuid";
 import PSQLPlayer from "../../../src/adapters/secondaries/PSQL/player/PSQLPlayer";
 import Player from "../../../src/core/domain/models/player/player";
 import {LegolasCharacterBuilder} from "../legolasCharacterBuilder";
-import PSQLCharacterRepository from "../../../src/adapters/secondaries/PSQL/character/PSQLCharacterRepository";
 import CharacterBuilder from "../characterBuilder";
 import Character from "../../../src/core/domain/models/character/character";
+import PSQLCharacterWriteRepository
+    from "../../../src/adapters/secondaries/PSQL/character/PSQLCharacterWriteRepository";
 
 describe('POST /characters', () => {
     let connection: Connection;
     let player: Player;
+    let characterWriteRepository: PSQLCharacterWriteRepository;
     let expectedPresentedCharacter: PresentedCharacterInterface;
     let requestContent: object;
     let command: ICreateACharacterCommand;
@@ -68,6 +70,7 @@ describe('POST /characters', () => {
             magikPoints: 0,
         };
         expectedPresentedCharacter.id = player.id;
+        characterWriteRepository = new PSQLCharacterWriteRepository();
     });
 
     it('responds a presented character in JSON', async () => {
@@ -103,8 +106,7 @@ describe('POST /characters', () => {
         const legolasCharacter = new LegolasCharacterBuilder()
             .withPlayerId(player.id)
             .build();
-        const characterRepository = new PSQLCharacterRepository();
-        await characterRepository.create(legolasCharacter);
+        await characterWriteRepository.create(legolasCharacter);
         requestContent = {
             playerId: player.id,
             name: 'Legolas',
@@ -138,8 +140,7 @@ describe('POST /characters', () => {
             ];
         }
         const createCharacters = async (charactersToCreate: Character[]) => {
-            const characterRepository = new PSQLCharacterRepository();
-            await Promise.all(charactersToCreate.map(async (c) => await characterRepository.create(c)));
+            await Promise.all(charactersToCreate.map(async (c) => await characterWriteRepository.create(c)));
         }
         await createCharacters(charactersToCreate());
         requestContent = {

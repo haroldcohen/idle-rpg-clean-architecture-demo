@@ -3,19 +3,23 @@ import container from '../../../../configuration/injection/inversify.config';
 import TYPES from '../../../../configuration/injection/types';
 import ICreateACharacter from '../../../../core/useCases/character/ICreateACharacter';
 import {
-    CharacterRepositoryInterface,
-} from '../../../../core/useCases/character/interfaces/characterRepositoryInterface';
+    CharacterWriteRepositoryInterface,
+} from '../../../../core/useCases/character/interfaces/characterWriteRepositoryInterface';
 import ICreateACharacterCommand
     from '../../../../core/useCases/character/types/ICreateACharacterCommand';
-import { PlayerRepositoryInterface } from '../../../../core/useCases/player/interfaces/playerRepositoryInterface';
+import {
+    PlayerReadRepositoryInterface,
+} from '../../../../core/useCases/player/interfaces/playerReadRepositoryInterface';
 import CharacterPresenter from '../../presenters/characters/characterPresenter';
 
 const charactersRouter = Router();
 
 charactersRouter.put('/', async (req: Request, res: Response) => {
     const { playerId, name, healthPoints, attackPoints, defensePoints, magikPoints } = req.body;
-    const characterRepository = container.get<CharacterRepositoryInterface>(TYPES.CharacterRepositoryInterface);
-    const playerRepository = container.get<PlayerRepositoryInterface>(TYPES.PlayerRepositoryInterface);
+    const characterWriteRepository = container
+        .get<CharacterWriteRepositoryInterface>(TYPES.CharacterWriteRepositoryInterface);
+    const playerReadRepository = container
+        .get<PlayerReadRepositoryInterface>(TYPES.PlayerReadRepositoryInterface);
     const iCreateACharacterExecutionParameters: ICreateACharacterCommand = {
         name,
         healthPoints,
@@ -24,7 +28,7 @@ charactersRouter.put('/', async (req: Request, res: Response) => {
         magikPoints,
     };
     try {
-        const createdCharacter = await new ICreateACharacter(characterRepository, playerRepository)
+        const createdCharacter = await new ICreateACharacter(characterWriteRepository, playerReadRepository)
             .execute(playerId, iCreateACharacterExecutionParameters);
         res.status(200);
 

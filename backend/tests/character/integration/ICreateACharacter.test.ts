@@ -7,19 +7,25 @@ import ICreateACharacterCommand
     from '../../../src/core/useCases/character/types/ICreateACharacterCommand';
 import PlayerBuilder from '../../player/playerBuilder';
 import { LegolasCharacterBuilder } from '../legolasCharacterBuilder';
-import PSQLCharacterRepository from '../../../src/adapters/secondaries/PSQL/character/PSQLCharacterRepository';
 import ICreateACharacter from '../../../src/core/useCases/character/ICreateACharacter';
 import { verifyCharacter } from '../verifyCharacter';
 import PSQLPlayer from '../../../src/adapters/secondaries/PSQL/player/PSQLPlayer';
-import PSQLPlayerRepository from '../../../src/adapters/secondaries/PSQL/player/PSQLPlayerRepository';
+import { CharacterWriteRepositoryInterface } from '../../../src/core/useCases/character/interfaces/characterWriteRepositoryInterface';
+import PSQLCharacterWriteRepository
+    from '../../../src/adapters/secondaries/PSQL/character/PSQLCharacterWriteRepository';
+import { CharacterReadRepositoryInterface } from '../../../src/core/useCases/character/interfaces/characterReadRepositoryInterface';
+import PSQLCharacterReadRepository from '../../../src/adapters/secondaries/PSQL/character/PSQLCharacterReadRepository';
+import { PlayerReadRepositoryInterface } from '../../../src/core/useCases/player/interfaces/playerReadRepositoryInterface';
+import PSQLPlayerReadRepository from '../../../src/adapters/secondaries/PSQL/player/PSQLPlayerReadRepository';
 
 describe('As a Player, I can create a character that starts at' +
     'level 1, rank 1 with 12 SP, 10 HP, 0 AP, 0 DP, 0 MP.', () => {
     let connection: Connection;
     var player: Player;
     var expectedCharacter: Character;
-    var characterRepository: PSQLCharacterRepository;
-    var playerRepository: PSQLPlayerRepository;
+    var characterReadRepository: CharacterReadRepositoryInterface;
+    var characterWriteRepository: CharacterWriteRepositoryInterface;
+    var playerReadRepository: PlayerReadRepositoryInterface;
     var iCreateACharacterCommand: ICreateACharacterCommand;
 
     beforeAll(async () => {
@@ -41,9 +47,10 @@ describe('As a Player, I can create a character that starts at' +
         await getRepository(PSQLPlayer)
             .create(pSQLPlayer)
             .save();
-        playerRepository = new PSQLPlayerRepository();
+        playerReadRepository = new PSQLPlayerReadRepository();
         expectedCharacter = new LegolasCharacterBuilder().build();
-        characterRepository = new PSQLCharacterRepository();
+        characterReadRepository = new PSQLCharacterReadRepository();
+        characterWriteRepository = new PSQLCharacterWriteRepository();
         iCreateACharacterCommand = {
             name: 'Legolas',
             healthPoints: 10,
@@ -54,7 +61,11 @@ describe('As a Player, I can create a character that starts at' +
     });
 
     it('When I create a character, it has 10 HP and 12 SP remaining.', async () => {
-        const createdCharacter = await new ICreateACharacter(characterRepository, playerRepository).execute(player.id, iCreateACharacterCommand);
+        const createdCharacter =
+            await new ICreateACharacter(
+                characterWriteRepository,
+                playerReadRepository,
+            ).execute(player.id, iCreateACharacterCommand);
         expectedCharacter = new LegolasCharacterBuilder()
             .withHealthPoints(10)
             .withSkillPoints(12)
@@ -62,6 +73,6 @@ describe('As a Player, I can create a character that starts at' +
         expect(createdCharacter.rank).toEqual(1);
         expect(createdCharacter.level).toEqual(1);
         verifyCharacter(createdCharacter, expectedCharacter);
-        verifyCharacter(createdCharacter, await characterRepository.read(createdCharacter.id));
+        verifyCharacter(createdCharacter, await characterReadRepository.read(createdCharacter.id));
     });
 });

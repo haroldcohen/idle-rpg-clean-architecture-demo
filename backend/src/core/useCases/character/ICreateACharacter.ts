@@ -1,19 +1,19 @@
 import Character from '../../domain/models/character/character';
-import { PlayerRepositoryInterface } from '../player/interfaces/playerRepositoryInterface';
-import { CharacterRepositoryInterface } from './interfaces/characterRepositoryInterface';
+import { PlayerReadRepositoryInterface } from '../player/interfaces/playerReadRepositoryInterface';
+import { CharacterWriteRepositoryInterface } from './interfaces/characterWriteRepositoryInterface';
 import ICreateACharacterCommand from './types/ICreateACharacterCommand';
 
 export default class ICreateACharacter {
-    #characterRepository: CharacterRepositoryInterface;
+    #characterWriteRepository: CharacterWriteRepositoryInterface;
 
-    #playerRepository: PlayerRepositoryInterface;
+    #playerReadRepository: PlayerReadRepositoryInterface;
 
     constructor(
-        characterRepository: CharacterRepositoryInterface,
-        playerRepository: PlayerRepositoryInterface,
+        characterWriteRepository: CharacterWriteRepositoryInterface,
+        playerReadRepository: PlayerReadRepositoryInterface,
     ) {
-        this.#characterRepository = characterRepository;
-        this.#playerRepository = playerRepository;
+        this.#characterWriteRepository = characterWriteRepository;
+        this.#playerReadRepository = playerReadRepository;
     }
 
     async execute(
@@ -34,9 +34,9 @@ export default class ICreateACharacter {
         createdCharacter.levelUpAttackPoints(attackPoints);
         createdCharacter.levelUpDefensePoints(defensePoints);
         createdCharacter.levelUpMagikPoints(magikPoints);
-        const player = await this.#playerRepository.read(playerId);
+        const player = await this.#playerReadRepository.read(playerId);
         player.playerCanCreateCharacterOrDie(createdCharacter);
 
-        return await this.#characterRepository.create(createdCharacter);
+        return await this.#characterWriteRepository.create(createdCharacter);
     }
 }

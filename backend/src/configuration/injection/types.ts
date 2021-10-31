@@ -1,6 +1,8 @@
 const TYPES = {
-    CharacterRepositoryInterface: Symbol.for('CharacterRepositoryInterface'),
-    PlayerRepositoryInterface: Symbol.for('PlayerRepositoryInterface'),
+    PlayerReadRepositoryInterface: Symbol.for('PlayerReadRepositoryInterface'),
+    PlayerWriteRepositoryInterface: Symbol.for('PlayerWriteRepositoryInterface'),
+    CharacterReadRepositoryInterface: Symbol.for('CharacterReadRepositoryInterface'),
+    CharacterWriteRepositoryInterface: Symbol.for('CharacterWriteRepositoryInterface'),
 };
 
 export default TYPES;
