@@ -24,6 +24,10 @@ export default class InMemoryCharacterReadRepository implements CharacterReadRep
         });
     }
 
+    static characterToInMemoryCharacter(character: Character): InMemoryCharacter {
+        return new InMemoryCharacter(character);
+    }
+
     async read(characterId: string): Promise<Character> {
         const filtered = this.characters.filter((c) => c.id === characterId).pop();
         if (!filtered) {

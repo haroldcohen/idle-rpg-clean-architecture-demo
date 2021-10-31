@@ -1,5 +1,5 @@
 import Player from '../../../../core/domain/models/player/player';
-import InMemoryCharacterRepository from '../character/inMemoryCharacterRepository';
+import InMemoryCharacterReadRepository from '../character/inMemoryCharacterReadRepository';
 import InMemoryPlayer from './inMemoryPlayer';
 
 export default class InMemoryPlayerWriteRepository {
@@ -12,7 +12,7 @@ export default class InMemoryPlayerWriteRepository {
     async create(player: Player): Promise<Player> {
         const createdPlayer = new InMemoryPlayer({
             id: player.id,
-            characters: player.characters.map((c) => InMemoryCharacterRepository.characterToInMemoryCharacter(c)),
+            characters: player.characters.map((c) => InMemoryCharacterReadRepository.characterToInMemoryCharacter(c)),
         });
         this.players.push(createdPlayer);
 

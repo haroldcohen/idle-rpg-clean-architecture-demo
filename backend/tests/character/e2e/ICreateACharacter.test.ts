@@ -6,15 +6,15 @@ import config from '../../../src/configuration/database/config';
 import ICreateACharacterCommand from '../../../src/core/useCases/character/types/ICreateACharacterCommand';
 import PresentedCharacterInterface
     from '../../../src/adapters/primaries/presenters/characters/presentedCharacterInterface';
-import PlayerBuilder from "../../player/playerBuilder";
-import {v4} from "uuid";
-import PSQLPlayer from "../../../src/adapters/secondaries/PSQL/player/PSQLPlayer";
-import Player from "../../../src/core/domain/models/player/player";
-import {LegolasCharacterBuilder} from "../legolasCharacterBuilder";
-import CharacterBuilder from "../characterBuilder";
-import Character from "../../../src/core/domain/models/character/character";
+import PlayerBuilder from '../../player/playerBuilder';
+import { v4 } from 'uuid';
+import PSQLPlayer from '../../../src/adapters/secondaries/PSQL/player/PSQLPlayer';
+import Player from '../../../src/core/domain/models/player/player';
+import {LegolasCharacterBuilder} from '../legolasCharacterBuilder';
+import CharacterBuilder from '../characterBuilder';
+import Character from '../../../src/core/domain/models/character/character';
 import PSQLCharacterWriteRepository
-    from "../../../src/adapters/secondaries/PSQL/character/PSQLCharacterWriteRepository";
+    from '../../../src/adapters/secondaries/PSQL/character/PSQLCharacterWriteRepository';
 
 describe('POST /characters', () => {
     let connection: Connection;

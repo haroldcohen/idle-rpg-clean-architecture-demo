@@ -2,7 +2,7 @@ import Player from '../../../../core/domain/models/player/player';
 import {
     PlayerReadRepositoryInterface,
 } from '../../../../core/useCases/player/interfaces/playerReadRepositoryInterface';
-import InMemoryCharacterRepository from '../character/inMemoryCharacterRepository';
+import InMemoryCharacterReadRepository from '../character/inMemoryCharacterReadRepository';
 import InMemoryPlayer from './inMemoryPlayer';
 
 export default class InMemoryPlayerReadRepository implements PlayerReadRepositoryInterface {
@@ -16,7 +16,7 @@ export default class InMemoryPlayerReadRepository implements PlayerReadRepositor
         return new Player({
             id: inMemoryPlayer.id,
             characters: inMemoryPlayer.characters.map(
-                (p) => InMemoryCharacterRepository.inMemoryCharacterToCharacter(p),
+                (p) => InMemoryCharacterReadRepository.inMemoryCharacterToCharacter(p),
             ),
         });
     }

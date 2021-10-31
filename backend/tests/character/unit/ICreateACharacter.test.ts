@@ -16,7 +16,6 @@ import CharacterDoesNotHaveEnoughSkillPointsException
     from '../../../src/core/domain/models/character/exceptions/characterDoesNotHaveEnoughSkillPointsException';
 import CharacterNameLengthException
     from '../../../src/core/domain/models/character/exceptions/characterNameLengthException';
-import InMemoryPlayerRepository from "../../../src/adapters/secondaries/inMemory/player/inMemoryPlayerRepository";
 import { CharacterWriteRepositoryInterface } from '../../../src/core/useCases/character/interfaces/characterWriteRepositoryInterface';
 import InMemoryCharacterWriteRepository
     from '../../../src/adapters/secondaries/inMemory/character/inMemoryCharacterWriteRepository';
