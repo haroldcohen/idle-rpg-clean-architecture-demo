@@ -1,4 +1,4 @@
-import Character from '../../../../core/domain/models/character/character';
+import CharacterSnapshot from '../../../../core/domain/models/character/characterSnapshot';
 import {
     CharacterWriteRepositoryInterface,
 } from '../../../../core/useCases/character/interfaces/characterWriteRepositoryInterface';
@@ -11,10 +11,8 @@ export default class InMemoryCharacterWriteRepository implements CharacterWriteR
         this.characters = inMemoryCharacters;
     }
 
-    async create(character: Character): Promise<Character> {
-        const createdCharacter = new InMemoryCharacter(character);
+    async create(characterSnapshot: CharacterSnapshot): Promise<void> {
+        const createdCharacter = new InMemoryCharacter(characterSnapshot);
         this.characters.push(createdCharacter);
-
-        return character;
     }
 }

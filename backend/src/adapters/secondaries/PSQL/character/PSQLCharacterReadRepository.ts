@@ -1,4 +1,4 @@
-import {injectable} from "inversify";
+import { injectable } from 'inversify';
 import { getRepository } from 'typeorm';
 import Character from '../../../../core/domain/models/character/character';
 import PSQLCharacter from './PSQLCharacter';

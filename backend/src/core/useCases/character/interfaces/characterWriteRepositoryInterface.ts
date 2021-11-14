@@ -1,5 +1,5 @@
-import Character from '../../../domain/models/character/character';
+import CharacterSnapshot from '../../../domain/models/character/characterSnapshot';
 
 export interface CharacterWriteRepositoryInterface {
-    create(character: Character): Promise<Character>;
+    create(characterSnapshot: CharacterSnapshot): void;
 }

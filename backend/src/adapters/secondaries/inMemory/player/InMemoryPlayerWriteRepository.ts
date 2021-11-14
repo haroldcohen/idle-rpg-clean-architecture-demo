@@ -1,21 +1,22 @@
-import Player from '../../../../core/domain/models/player/player';
-import InMemoryCharacterReadRepository from '../character/inMemoryCharacterReadRepository';
+import PlayerSnapshot from '../../../../core/domain/models/player/playerSnapshot';
+import {
+    PlayerWriteRepositoryInterface,
+} from '../../../../core/useCases/player/interfaces/playerWriteRepositoryInterface';
+import InMemoryCharacter from '../character/inMemoryCharacter';
 import InMemoryPlayer from './inMemoryPlayer';
 
-export default class InMemoryPlayerWriteRepository {
+export default class InMemoryPlayerWriteRepository implements PlayerWriteRepositoryInterface {
     players: InMemoryPlayer[];
 
     constructor(players: InMemoryPlayer[]) {
         this.players = players;
     }
 
-    async create(player: Player): Promise<Player> {
-        const createdPlayer = new InMemoryPlayer({
-            id: player.id,
-            characters: player.characters.map((c) => InMemoryCharacterReadRepository.characterToInMemoryCharacter(c)),
+    async create(playerSnapshot: PlayerSnapshot): Promise<void> {
+        const playerToCreate = new InMemoryPlayer({
+            id: playerSnapshot.id,
+            characters: playerSnapshot.characters.map((c) => new InMemoryCharacter(c)),
         });
-        this.players.push(createdPlayer);
-
-        return player;
+        this.players.push(playerToCreate);
     }
 }

@@ -1,4 +1,5 @@
 import { v4 } from 'uuid';
+import CharacterSnapshot from './characterSnapshot';
 import CharacterDoesNotHaveEnoughSkillPointsException
     from './exceptions/characterDoesNotHaveEnoughSkillPointsException';
 import CharacterNameLengthException from './exceptions/characterNameLengthException';
@@ -54,46 +55,6 @@ export default class Character {
         }
     }
 
-    get id(): string {
-        return this.#id;
-    }
-
-    get name(): string {
-        return this.#name;
-    }
-
-    get level(): number {
-        return 1;
-    }
-
-    get rank(): number {
-        return 1;
-    }
-
-    get skillPoints(): number {
-        return this.#skillPoints;
-    }
-
-    get healthPoints(): number {
-        return this.#healthPoints;
-    }
-
-    get attackPoints(): number {
-        return this.#attackPoints;
-    }
-
-    get defensePoints(): number {
-        return this.#defensePoints;
-    }
-
-    get magikPoints(): number {
-        return this.#magikPoints;
-    }
-
-    get playerId(): string {
-        return this.#playerId;
-    }
-
     private spendSkillPoints(skillPointsToSpend: number): void {
         this.canSpendSkillPointsOrDie(skillPointsToSpend);
         this.#skillPoints -= skillPointsToSpend;
@@ -142,5 +103,18 @@ export default class Character {
             this.spendSkillPoints(Character.computeSkillPointsToSpend(this.#magikPoints, magikPoints));
             this.#magikPoints = magikPoints;
         }
+    }
+
+    snapshot(): CharacterSnapshot {
+        return new CharacterSnapshot({
+            id: this.#id,
+            name: this.#name,
+            skillPoints: this.#skillPoints,
+            healthPoints: this.#healthPoints,
+            attackPoints: this.#attackPoints,
+            defensePoints: this.#defensePoints,
+            magikPoints: this.#magikPoints,
+            playerId: this.#playerId,
+        });
     }
 }

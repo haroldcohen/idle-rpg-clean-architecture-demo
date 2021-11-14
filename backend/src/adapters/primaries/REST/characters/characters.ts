@@ -20,16 +20,17 @@ charactersRouter.put('/', async (req: Request, res: Response) => {
         .get<CharacterWriteRepositoryInterface>(TYPES.CharacterWriteRepositoryInterface);
     const playerReadRepository = container
         .get<PlayerReadRepositoryInterface>(TYPES.PlayerReadRepositoryInterface);
-    const iCreateACharacterExecutionParameters: ICreateACharacterCommand = {
+    const command: ICreateACharacterCommand = {
         name,
         healthPoints,
         attackPoints,
         defensePoints,
         magikPoints,
+        playerId,
     };
     try {
         const createdCharacter = await new ICreateACharacter(characterWriteRepository, playerReadRepository)
-            .execute(playerId, iCreateACharacterExecutionParameters);
+            .execute(command);
         res.status(200);
 
         return res.json(CharacterPresenter.present(createdCharacter));

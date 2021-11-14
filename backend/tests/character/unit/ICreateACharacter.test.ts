@@ -1,8 +1,6 @@
-import Character from '../../../src/core/domain/models/character/character';
 import ICreateACharacter from '../../../src/core/useCases/character/ICreateACharacter';
 import PlayerBuilder from '../../player/playerBuilder';
 import { LegolasCharacterBuilder } from '../legolasCharacterBuilder';
-import { verifyCharacter } from '../verifyCharacter';
 import Player from '../../../src/core/domain/models/player/player';
 import CharacterLimitReachedException
     from '../../../src/core/domain/models/character/exceptions/characterLimitReachedException';
@@ -16,28 +14,32 @@ import CharacterDoesNotHaveEnoughSkillPointsException
     from '../../../src/core/domain/models/character/exceptions/characterDoesNotHaveEnoughSkillPointsException';
 import CharacterNameLengthException
     from '../../../src/core/domain/models/character/exceptions/characterNameLengthException';
-import { CharacterWriteRepositoryInterface } from '../../../src/core/useCases/character/interfaces/characterWriteRepositoryInterface';
+import {CharacterWriteRepositoryInterface} from '../../../src/core/useCases/character/interfaces/characterWriteRepositoryInterface';
 import InMemoryCharacterWriteRepository
     from '../../../src/adapters/secondaries/inMemory/character/inMemoryCharacterWriteRepository';
-import { CharacterReadRepositoryInterface } from '../../../src/core/useCases/character/interfaces/characterReadRepositoryInterface';
+import {CharacterReadRepositoryInterface} from '../../../src/core/useCases/character/interfaces/characterReadRepositoryInterface';
 import InMemoryCharacterReadRepository
     from '../../../src/adapters/secondaries/inMemory/character/inMemoryCharacterReadRepository';
-import { PlayerReadRepositoryInterface } from '../../../src/core/useCases/player/interfaces/playerReadRepositoryInterface';
+import {PlayerReadRepositoryInterface} from '../../../src/core/useCases/player/interfaces/playerReadRepositoryInterface';
 import InMemoryPlayerReadRepository
     from '../../../src/adapters/secondaries/inMemory/player/inMemoryPlayerReadRepository';
 import InMemoryPlayer from '../../../src/adapters/secondaries/inMemory/player/inMemoryPlayer';
 import { PlayerWriteRepositoryInterface } from '../../../src/core/useCases/player/interfaces/playerWriteRepositoryInterface';
 import InMemoryPlayerWriteRepository
-    from "../../../src/adapters/secondaries/inMemory/player/InMemoryPlayerWriteRepository";
+    from '../../../src/adapters/secondaries/inMemory/player/InMemoryPlayerWriteRepository';
+import CharacterSnapshot from '../../../src/core/domain/models/character/characterSnapshot';
+import PlayerSnapshot from '../../../src/core/domain/models/player/playerSnapshot';
 
 
 describe('As a Player, I can create a character that starts at' +
     'level 1, rank 1 with 12 SP, 10 HP, 0 AP, 0 DP, 0 MP.', () => {
     var player: Player;
+    var playerSnapShot: PlayerSnapshot;
+    var playerId: string;
     var inMemoryPlayersList: InMemoryPlayer[] = [];
     var playerReadRepository: PlayerReadRepositoryInterface;
     var playerWriteRepository: PlayerWriteRepositoryInterface;
-    var expectedCharacter: Character;
+    var expectedCharacter: CharacterSnapshot;
     var inMemoryCharactersList: InMemoryCharacter[];
     var characterReadRepository: CharacterReadRepositoryInterface;
     var characterWriteRepository: CharacterWriteRepositoryInterface;
@@ -49,12 +51,11 @@ describe('As a Player, I can create a character that starts at' +
         player = new PlayerBuilder()
             .withId('1')
             .build();
+        playerSnapShot = player.snapshot();
+        playerId = playerSnapShot.id;
         playerReadRepository = new InMemoryPlayerReadRepository(inMemoryPlayersList);
         playerWriteRepository = new InMemoryPlayerWriteRepository(inMemoryPlayersList);
-        playerWriteRepository.create(player);
-        expectedCharacter = new LegolasCharacterBuilder()
-            .withPlayerId('1')
-            .build();
+        playerWriteRepository.create(playerSnapShot);
         characterReadRepository = new InMemoryCharacterReadRepository(inMemoryCharactersList);
         characterWriteRepository = new InMemoryCharacterWriteRepository(inMemoryCharactersList);
         iCreateACharacterCommand = {
@@ -63,25 +64,31 @@ describe('As a Player, I can create a character that starts at' +
             attackPoints: 0,
             defensePoints: 0,
             magikPoints: 0,
+            playerId,
         };
     });
 
     it('When I create a character, it has 10 HP and 12 SP remaining.', async () => {
-        const createdCharacter: Character =
+        const createdCharacter: CharacterSnapshot =
             await new ICreateACharacter(
                 characterWriteRepository,
                 playerReadRepository
-            ).execute(player.id, iCreateACharacterCommand);
-        expectedCharacter = new LegolasCharacterBuilder()
-            .withHealthPoints(10)
-            .withSkillPoints(12)
-            .build();
-        expect(createdCharacter.rank).toEqual(1);
-        expect(createdCharacter.level).toEqual(1);
-        verifyCharacter(createdCharacter, expectedCharacter);
-        verifyCharacter(createdCharacter, await characterReadRepository.read(createdCharacter.id));
-        const allRetrievedCharacters = await characterReadRepository.all();
-        expect(allRetrievedCharacters.map((c) => c.id)).toContain(createdCharacter.id);
+            ).execute(iCreateACharacterCommand);
+        expectedCharacter = {
+            id: createdCharacter.id,
+            name: 'Legolas',
+            skillPoints: 12,
+            healthPoints: 10,
+            attackPoints: 0,
+            defensePoints: 0,
+            magikPoints: 0,
+            rank: 1,
+            level: 1,
+            playerId: player.id,
+        };
+        expect(createdCharacter).toEqual(expectedCharacter);
+        const retrievedCharacter = await characterReadRepository.read(createdCharacter.id);
+        expect(retrievedCharacter.snapshot()).toEqual(expectedCharacter);
     });
 
     it('When I create a character with 11 HP and 1 AP, 1 DP and 1 MP I have 8 SP left.', async () => {
@@ -91,22 +98,28 @@ describe('As a Player, I can create a character that starts at' +
             attackPoints: 1,
             defensePoints: 1,
             magikPoints: 1,
+            playerId,
         };
-        const createdCharacter: Character =
+        const createdCharacter: CharacterSnapshot =
             await new ICreateACharacter(
                 characterWriteRepository,
                 playerReadRepository
-            ).execute(player.id, iCreateACharacterCommand);
-
-        expectedCharacter = new LegolasCharacterBuilder()
-            .withHealthPoints(11)
-            .withSkillPoints(8)
-            .withAttackPoints(1)
-            .withDefensePoints(1)
-            .withMagikPoints(1)
-            .build();
-        verifyCharacter(createdCharacter, expectedCharacter);
-        verifyCharacter(createdCharacter, await characterReadRepository.read(createdCharacter.id));
+            ).execute(iCreateACharacterCommand);
+        expectedCharacter = {
+            id: createdCharacter.id,
+            name: 'Legolas',
+            skillPoints: 8,
+            healthPoints: 11,
+            attackPoints: 1,
+            defensePoints: 1,
+            magikPoints: 1,
+            rank: 1,
+            level: 1,
+            playerId: player.id,
+        };
+        expect(createdCharacter).toEqual(expectedCharacter);
+        const retrievedCharacter = await characterReadRepository.read(createdCharacter.id);
+        expect(retrievedCharacter.snapshot()).toEqual(expectedCharacter);
     });
 
     it('When I create a character with 11 HP and 8 AP, I have 1 SP left.', async () => {
@@ -116,19 +129,28 @@ describe('As a Player, I can create a character that starts at' +
             attackPoints: 8,
             defensePoints: 0,
             magikPoints: 0,
+            playerId,
         };
-        const createdCharacter: Character =
+        const createdCharacter: CharacterSnapshot =
             await new ICreateACharacter(
                 characterWriteRepository,
                 playerReadRepository
-            ).execute(player.id, iCreateACharacterCommand);
-        expectedCharacter = new LegolasCharacterBuilder()
-            .withHealthPoints(11)
-            .withAttackPoints(8)
-            .withSkillPoints(1)
-            .build();
-        verifyCharacter(createdCharacter, expectedCharacter);
-        verifyCharacter(createdCharacter, await characterReadRepository.read(createdCharacter.id));
+            ).execute(iCreateACharacterCommand);
+        expectedCharacter = {
+            id: createdCharacter.id,
+            name: 'Legolas',
+            skillPoints: 1,
+            healthPoints: 11,
+            attackPoints: 8,
+            defensePoints: 0,
+            magikPoints: 0,
+            rank: 1,
+            level: 1,
+            playerId: player.id,
+        };
+        expect(createdCharacter).toEqual(expectedCharacter);
+        const retrievedCharacter = await characterReadRepository.read(createdCharacter.id);
+        expect(retrievedCharacter.snapshot()).toEqual(expectedCharacter);
     });
 
     it('When I create a character with more than 12 SP distributed, I receive an error.', async () => {
@@ -138,12 +160,13 @@ describe('As a Player, I can create a character that starts at' +
             attackPoints: 0,
             defensePoints: 0,
             magikPoints: 0,
+            playerId,
         };
         await expect(
             new ICreateACharacter(
                 characterWriteRepository,
                 playerReadRepository
-            ).execute(player.id, iCreateACharacterCommand)
+            ).execute(iCreateACharacterCommand)
         ).rejects.toThrow(CharacterDoesNotHaveEnoughSkillPointsException);
     });
 
@@ -163,12 +186,12 @@ describe('As a Player, I can create a character that starts at' +
                 new CharacterBuilder().withName('Gandalf').withPlayerId('1').build(),
             ])
             .build();
-        await playerWriteRepository.create(player);
+        await playerWriteRepository.create(player.snapshot());
         await expect(
             new ICreateACharacter(
                 characterWriteRepository,
                 playerReadRepository
-            ).execute(player.id, iCreateACharacterCommand)
+            ).execute(iCreateACharacterCommand)
         ).rejects.toThrow(CharacterLimitReachedException);
     });
 
@@ -179,12 +202,13 @@ describe('As a Player, I can create a character that starts at' +
                 new LegolasCharacterBuilder().withPlayerId('1').build(),
             ])
             .build();
-        await playerWriteRepository.create(player);
+        playerSnapShot = player.snapshot();
+        await playerWriteRepository.create(playerSnapShot);
         await expect(
             new ICreateACharacter(
                 characterWriteRepository,
                 playerReadRepository
-            ).execute(player.id, iCreateACharacterCommand)
+            ).execute(iCreateACharacterCommand)
         ).rejects.toThrow(CharacterNameAlreadyTakenException);
     });
 
@@ -195,15 +219,13 @@ describe('As a Player, I can create a character that starts at' +
             attackPoints: 1,
             defensePoints: 1,
             magikPoints: 1,
+            playerId,
         };
-        player = new PlayerBuilder()
-            .withId('1')
-            .build();
         await expect(
             new ICreateACharacter(
                 characterWriteRepository,
                 playerReadRepository
-            ).execute(player.id, iCreateACharacterCommand)
+            ).execute(iCreateACharacterCommand)
         ).rejects.toThrow(CharacterNameLengthException);
     });
 });

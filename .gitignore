@@ -2,3 +2,4 @@
 /.env
 docker-compose.override.yaml
 /*/node_modules/
+/*/**/*.BadExample.ts

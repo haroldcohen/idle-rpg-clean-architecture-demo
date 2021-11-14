@@ -15,14 +15,15 @@ import CharacterBuilder from '../characterBuilder';
 import Character from '../../../src/core/domain/models/character/character';
 import PSQLCharacterWriteRepository
     from '../../../src/adapters/secondaries/PSQL/character/PSQLCharacterWriteRepository';
+import PlayerSnapshot from '../../../src/core/domain/models/player/playerSnapshot';
 
 describe('POST /characters', () => {
     let connection: Connection;
     let player: Player;
+    let playerSnapshot: PlayerSnapshot;
     let characterWriteRepository: PSQLCharacterWriteRepository;
     let expectedPresentedCharacter: PresentedCharacterInterface;
     let requestContent: object;
-    let command: ICreateACharacterCommand;
 
     beforeAll(async () => {
         expectedPresentedCharacter = {
@@ -35,13 +36,6 @@ describe('POST /characters', () => {
             magikPoints: 0,
             level: 1,
             rank: 1,
-        };
-        command = {
-            name: 'Legolas',
-            healthPoints: 10,
-            attackPoints: 0,
-            defensePoints: 0,
-            magikPoints: 0,
         };
         connection = await createConnection(config);
         await connection.runMigrations();
@@ -57,12 +51,13 @@ describe('POST /characters', () => {
         player = new PlayerBuilder()
             .withId(v4())
             .build();
+        playerSnapshot = player.snapshot();
         const pSQLPlayer = new PSQLPlayer(player.id);
         await getRepository(PSQLPlayer)
             .create(pSQLPlayer)
             .save();
         requestContent = {
-            playerId: player.id,
+            playerId: playerSnapshot.id,
             name: 'Legolas',
             healthPoints: 10,
             attackPoints: 0,
@@ -106,7 +101,7 @@ describe('POST /characters', () => {
         const legolasCharacter = new LegolasCharacterBuilder()
             .withPlayerId(player.id)
             .build();
-        await characterWriteRepository.create(legolasCharacter);
+        await characterWriteRepository.create(legolasCharacter.snapshot());
         requestContent = {
             playerId: player.id,
             name: 'Legolas',
@@ -140,7 +135,7 @@ describe('POST /characters', () => {
             ];
         }
         const createCharacters = async (charactersToCreate: Character[]) => {
-            await Promise.all(charactersToCreate.map(async (c) => await characterWriteRepository.create(c)));
+            await Promise.all(charactersToCreate.map(async (c) => await characterWriteRepository.create(c.snapshot())));
         }
         await createCharacters(charactersToCreate());
         requestContent = {
