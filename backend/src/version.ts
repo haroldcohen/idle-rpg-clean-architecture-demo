@@ -1,3 +1,3 @@
-const version: string|null = null;
+const version: string|null = '0.9.0';
 
 export default version;

@@ -11,6 +11,7 @@ services:
             PGPASSWORD: password
             POSTGRES_USER: user
             POSTGRES_PASSWORD: password
+            POSTGRES_DB: idle_rpg
     backend:
         build:
             context: backend/docker
@@ -19,6 +20,7 @@ services:
         volumes:
             - ./backend:/usr/src/project/backend
         environment:
+            DATABASE_CONFIG: ./backend/ormconfig.js
             DATABASE_URL: postgresql://user:password@postgres/idle_rpg
     frontend:
         build:
