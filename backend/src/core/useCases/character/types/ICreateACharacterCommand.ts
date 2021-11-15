@@ -1,4 +1,4 @@
-type ICreateACharacterCommand = {
+type ICreateACharacterCommandType = {
     name: string;
     healthPoints: number;
     attackPoints: number;
@@ -7,4 +7,4 @@ type ICreateACharacterCommand = {
     playerId: string;
 }
 
-export default ICreateACharacterCommand;
+export default ICreateACharacterCommandType;

@@ -8,7 +8,7 @@ import CharacterBuilder from "../characterBuilder";
 import CharacterNameAlreadyTakenException
     from '../../../src/core/domain/models/character/exceptions/characterNameAlreadyTakenException';
 import InMemoryCharacter from '../../../src/adapters/secondaries/inMemory/character/inMemoryCharacter';
-import ICreateACharacterCommand
+import ICreateACharacterCommandType
     from '../../../src/core/useCases/character/types/ICreateACharacterCommand';
 import CharacterDoesNotHaveEnoughSkillPointsException
     from '../../../src/core/domain/models/character/exceptions/characterDoesNotHaveEnoughSkillPointsException';
@@ -43,7 +43,7 @@ describe('As a Player, I can create a character that starts at' +
     var inMemoryCharactersList: InMemoryCharacter[];
     var characterReadRepository: CharacterReadRepositoryInterface;
     var characterWriteRepository: CharacterWriteRepositoryInterface;
-    var iCreateACharacterCommand: ICreateACharacterCommand;
+    var iCreateACharacterCommand: ICreateACharacterCommandType;
 
     beforeEach(() => {
         inMemoryCharactersList = [];
@@ -84,7 +84,7 @@ describe('As a Player, I can create a character that starts at' +
             magikPoints: 0,
             rank: 1,
             level: 1,
-            playerId: player.id,
+            playerId: playerSnapShot.id,
         };
         expect(createdCharacter).toEqual(expectedCharacter);
         const retrievedCharacter = await characterReadRepository.read(createdCharacter.id);
@@ -115,7 +115,7 @@ describe('As a Player, I can create a character that starts at' +
             magikPoints: 1,
             rank: 1,
             level: 1,
-            playerId: player.id,
+            playerId: playerSnapShot.id,
         };
         expect(createdCharacter).toEqual(expectedCharacter);
         const retrievedCharacter = await characterReadRepository.read(createdCharacter.id);
@@ -146,7 +146,7 @@ describe('As a Player, I can create a character that starts at' +
             magikPoints: 0,
             rank: 1,
             level: 1,
-            playerId: player.id,
+            playerId: playerSnapShot.id,
         };
         expect(createdCharacter).toEqual(expectedCharacter);
         const retrievedCharacter = await characterReadRepository.read(createdCharacter.id);

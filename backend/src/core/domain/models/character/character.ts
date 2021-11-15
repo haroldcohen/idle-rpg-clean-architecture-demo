@@ -66,11 +66,14 @@ export default class Character {
         }
     }
 
-    levelUpHealthPoints(healthPoints: number): void {
-        if (healthPoints > this.#healthPoints) {
-            this.spendSkillPoints(healthPoints - this.#healthPoints);
-            this.#healthPoints = healthPoints;
-        }
+    levelUpSkills(healthPoints: number,
+        attackPoints: number,
+        defensePoints: number,
+        magikPoints: number): void {
+        this.levelUpHealthPoints(healthPoints);
+        this.levelUpAttackPoints(attackPoints);
+        this.levelUpDefensePoints(defensePoints);
+        this.levelUpMagikPoints(magikPoints);
     }
 
     private static computeSkillPointsToSpend(currentLevel: number, targetLevel: number): number {
@@ -84,21 +87,28 @@ export default class Character {
         return skillsPointsToSpend;
     }
 
-    levelUpAttackPoints(attackPoints: number): void {
+    private levelUpHealthPoints(healthPoints: number): void {
+        if (healthPoints > this.#healthPoints) {
+            this.spendSkillPoints(healthPoints - this.#healthPoints);
+            this.#healthPoints = healthPoints;
+        }
+    }
+
+    private levelUpAttackPoints(attackPoints: number): void {
         if (attackPoints > this.#attackPoints) {
             this.spendSkillPoints(Character.computeSkillPointsToSpend(this.#attackPoints, attackPoints));
             this.#attackPoints = attackPoints;
         }
     }
 
-    levelUpDefensePoints(defensePoints: number): void {
+    private levelUpDefensePoints(defensePoints: number): void {
         if (defensePoints > this.#defensePoints) {
             this.spendSkillPoints(Character.computeSkillPointsToSpend(this.#defensePoints, defensePoints));
             this.#defensePoints = defensePoints;
         }
     }
 
-    levelUpMagikPoints(magikPoints: number): void {
+    private levelUpMagikPoints(magikPoints: number): void {
         if (magikPoints > this.#magikPoints) {
             this.spendSkillPoints(Character.computeSkillPointsToSpend(this.#magikPoints, magikPoints));
             this.#magikPoints = magikPoints;

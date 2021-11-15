@@ -2,7 +2,7 @@ import Character from '../../domain/models/character/character';
 import CharacterSnapshot from '../../domain/models/character/characterSnapshot';
 import { PlayerReadRepositoryInterface } from '../player/interfaces/playerReadRepositoryInterface';
 import { CharacterWriteRepositoryInterface } from './interfaces/characterWriteRepositoryInterface';
-import ICreateACharacterCommand from './types/ICreateACharacterCommand';
+import ICreateACharacterCommandType from './types/ICreateACharacterCommand';
 
 export default class ICreateACharacter {
     #characterWriteRepository: CharacterWriteRepositoryInterface;
@@ -18,7 +18,7 @@ export default class ICreateACharacter {
     }
 
     async execute(
-        command: ICreateACharacterCommand,
+        command: ICreateACharacterCommandType,
     ): Promise<CharacterSnapshot> {
         const { name, healthPoints, attackPoints, defensePoints, magikPoints, playerId } = command;
         const characterToCreate = new Character({
@@ -30,12 +30,14 @@ export default class ICreateACharacter {
             magikPoints: 0,
             playerId,
         });
-        characterToCreate.levelUpHealthPoints(healthPoints);
-        characterToCreate.levelUpAttackPoints(attackPoints);
-        characterToCreate.levelUpDefensePoints(defensePoints);
-        characterToCreate.levelUpMagikPoints(magikPoints);
+        characterToCreate.levelUpSkills(
+            healthPoints,
+            attackPoints,
+            defensePoints,
+            magikPoints,
+        );
         const player = await this.#playerReadRepository.read(playerId);
-        player.canCreateCharacterOrDie(characterToCreate.snapshot());
+        player.canCreateCharacterOrThrow(characterToCreate.snapshot());
 
         await this.#characterWriteRepository.create(characterToCreate.snapshot());
 

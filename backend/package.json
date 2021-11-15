@@ -2,6 +2,7 @@
   "name": "backend",
   "dependencies": {
     "@sentry/node": "^5.29.2",
+    "data-transfer-object": "^0.4.0",
     "express": "^5.0.0-alpha.8",
     "inversify": "^5.1.1",
     "lodash": "^4.17.21",

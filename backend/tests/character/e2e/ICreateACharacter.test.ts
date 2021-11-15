@@ -63,7 +63,7 @@ describe('POST /characters', () => {
             defensePoints: 0,
             magikPoints: 0,
         };
-        expectedPresentedCharacter.id = player.id;
+        expectedPresentedCharacter.id = playerSnapshot.id;
         characterWriteRepository = new PSQLCharacterWriteRepository();
     });
 
@@ -90,7 +90,7 @@ describe('POST /characters', () => {
         await supertest(app)
             .put('/api/characters')
             .send(requestContent)
-            .expect(500)
+            .expect(400)
             .then(async (res: Response) => {
                 expect(res.body.errorMessage).toEqual('Character does not have enough skill points to spend');
             });
@@ -98,7 +98,7 @@ describe('POST /characters', () => {
 
     it('responds with an error message "Cannot use twice the same character name"', async () => {
         const legolasCharacter = new LegolasCharacterBuilder()
-            .withPlayerId(player.id)
+            .withPlayerId(playerSnapshot.id)
             .build();
         await characterWriteRepository.create(legolasCharacter.snapshot());
         requestContent = {
@@ -112,7 +112,7 @@ describe('POST /characters', () => {
         await supertest(app)
             .put('/api/characters')
             .send(requestContent)
-            .expect(500)
+            .expect(400)
             .then(async (res: Response) => {
                 expect(res.body.errorMessage).toEqual('Cannot use twice the same character name');
             });
@@ -121,16 +121,16 @@ describe('POST /characters', () => {
     it('responds with an error message "You\'ve reached the limit of 10 characters per player"', async () => {
         const charactersToCreate = (): Character[] => {
             return [
-                new CharacterBuilder().withName('Frodo').withPlayerId(player.id).build(),
-                new CharacterBuilder().withName('Samwise').withPlayerId(player.id).build(),
-                new CharacterBuilder().withName('Pippin').withPlayerId(player.id).build(),
-                new CharacterBuilder().withName('Merry').withPlayerId(player.id).build(),
-                new CharacterBuilder().withName('Aragorn').withPlayerId(player.id).build(),
-                new CharacterBuilder().withName('Legolas').withPlayerId(player.id).build(),
-                new CharacterBuilder().withName('Gimli').withPlayerId(player.id).build(),
-                new CharacterBuilder().withName('Aragorn').withPlayerId(player.id).build(),
-                new CharacterBuilder().withName('Boromir').withPlayerId(player.id).build(),
-                new CharacterBuilder().withName('Gandalf').withPlayerId(player.id).build(),
+                new CharacterBuilder().withName('Frodo').withPlayerId(playerSnapshot.id).build(),
+                new CharacterBuilder().withName('Samwise').withPlayerId(playerSnapshot.id).build(),
+                new CharacterBuilder().withName('Pippin').withPlayerId(playerSnapshot.id).build(),
+                new CharacterBuilder().withName('Merry').withPlayerId(playerSnapshot.id).build(),
+                new CharacterBuilder().withName('Aragorn').withPlayerId(playerSnapshot.id).build(),
+                new CharacterBuilder().withName('Legolas').withPlayerId(playerSnapshot.id).build(),
+                new CharacterBuilder().withName('Gimli').withPlayerId(playerSnapshot.id).build(),
+                new CharacterBuilder().withName('Aragorn').withPlayerId(playerSnapshot.id).build(),
+                new CharacterBuilder().withName('Boromir').withPlayerId(playerSnapshot.id).build(),
+                new CharacterBuilder().withName('Gandalf').withPlayerId(playerSnapshot.id).build(),
             ];
         }
         const createCharacters = async (charactersToCreate: Character[]) => {
@@ -148,9 +148,31 @@ describe('POST /characters', () => {
         await supertest(app)
             .put('/api/characters')
             .send(requestContent)
-            .expect(500)
+            .expect(400)
             .then(async (res: Response) => {
                 expect(res.body.errorMessage).toEqual('You\'ve reached the limit of 10 characters per player');
+            });
+    });
+
+    it('responds with an error message "Invalid request"', async () => {
+        requestContent = {
+            playerId: playerSnapshot.id,
+            name: 1,
+            healthPoints: '10',
+            attackPoints: 0,
+            defensePoints: 0,
+            magikPoints: 0,
+        };
+        await supertest(app)
+            .put('/api/characters')
+            .send(requestContent)
+            .expect(400)
+            .then(async (res: Response) => {
+                expect(res.body.errorMessage).toEqual(
+                    'Invalid request: ' +
+                    'name must be a string, ' +
+                    'healthPoints must be an integer number'
+                );
             });
     });
 });

@@ -2,7 +2,7 @@ import { v4 } from 'uuid';
 import { Connection, createConnection, getRepository } from 'typeorm';
 import config from '../../../src/configuration/database/config';
 import Player from '../../../src/core/domain/models/player/player';
-import ICreateACharacterCommand
+import ICreateACharacterCommandType
     from '../../../src/core/useCases/character/types/ICreateACharacterCommand';
 import PlayerBuilder from '../../player/playerBuilder';
 import { LegolasCharacterBuilder } from '../legolasCharacterBuilder';
@@ -28,7 +28,7 @@ describe('As a Player, I can create a character that starts at' +
     var characterReadRepository: CharacterReadRepositoryInterface;
     var characterWriteRepository: CharacterWriteRepositoryInterface;
     var playerReadRepository: PlayerReadRepositoryInterface;
-    var iCreateACharacterCommand: ICreateACharacterCommand;
+    var iCreateACharacterCommand: ICreateACharacterCommandType;
 
     beforeAll(async () => {
         connection = await createConnection(config);

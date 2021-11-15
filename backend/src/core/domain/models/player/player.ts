@@ -16,15 +16,7 @@ export default class Player {
         this.#characters = characters;
     }
 
-    get id(): string {
-        return this.#id;
-    }
-
-    get characters(): Character[] {
-        return this.#characters;
-    }
-
-    canCreateCharacterOrDie(character: CharacterSnapshot): void {
+    canCreateCharacterOrThrow(character: CharacterSnapshot): void {
         if (this.#characters.length >= 10) {
             throw new CharacterLimitReachedException();
         }
