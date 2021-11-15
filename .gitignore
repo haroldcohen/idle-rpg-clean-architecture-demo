@@ -3,3 +3,5 @@
 docker-compose.override.yaml
 /*/node_modules/
 /*/**/*.BadExample.ts
+/*/**/*.BetterExample.ts
+/*/**/*.draft.*.ts

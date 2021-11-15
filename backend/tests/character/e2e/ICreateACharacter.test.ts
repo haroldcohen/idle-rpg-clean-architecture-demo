@@ -3,7 +3,6 @@ import supertest, {Response} from 'supertest';
 import app from '../../../src/configuration/app';
 import {Connection, createConnection, getRepository} from 'typeorm';
 import config from '../../../src/configuration/database/config';
-import ICreateACharacterCommand from '../../../src/core/useCases/character/types/ICreateACharacterCommand';
 import PresentedCharacterInterface
     from '../../../src/adapters/primaries/presenters/characters/presentedCharacterInterface';
 import PlayerBuilder from '../../player/playerBuilder';
@@ -52,7 +51,7 @@ describe('POST /characters', () => {
             .withId(v4())
             .build();
         playerSnapshot = player.snapshot();
-        const pSQLPlayer = new PSQLPlayer(player.id);
+        const pSQLPlayer = new PSQLPlayer(playerSnapshot.id);
         await getRepository(PSQLPlayer)
             .create(pSQLPlayer)
             .save();
@@ -81,7 +80,7 @@ describe('POST /characters', () => {
 
     it('responds with an error message "Character does not have enough skill points to spend"', async () => {
         requestContent = {
-            playerId: player.id,
+            playerId: playerSnapshot.id,
             name: 'Legolas',
             healthPoints: 30,
             attackPoints: 0,
@@ -103,7 +102,7 @@ describe('POST /characters', () => {
             .build();
         await characterWriteRepository.create(legolasCharacter.snapshot());
         requestContent = {
-            playerId: player.id,
+            playerId: playerSnapshot.id,
             name: 'Legolas',
             healthPoints: 10,
             attackPoints: 0,
@@ -139,7 +138,7 @@ describe('POST /characters', () => {
         }
         await createCharacters(charactersToCreate());
         requestContent = {
-            playerId: player.id,
+            playerId: playerSnapshot.id,
             name: 'Legolas',
             healthPoints: 10,
             attackPoints: 0,
