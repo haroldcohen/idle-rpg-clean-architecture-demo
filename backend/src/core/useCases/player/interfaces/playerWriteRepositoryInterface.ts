@@ -1,5 +1,5 @@
-import PlayerSnapshot from '../../../domain/models/player/playerSnapshot';
+import PlayerSnapShotType from '../../../domain/models/player/types/playerSnapshot';
 
 export interface PlayerWriteRepositoryInterface {
-    create(player: PlayerSnapshot): Promise<void>
+    create(player: PlayerSnapShotType): Promise<void>
 }

@@ -1,6 +1,6 @@
 // @ts-ignore
 import supertest, {Response} from 'supertest';
-import app from '../../../src/configuration/app';
+import app from '../../../src/configuration/primaries/app';
 import {Connection, createConnection, getRepository} from 'typeorm';
 import config from '../../../src/configuration/database/config';
 import PresentedCharacterInterface
@@ -14,12 +14,12 @@ import CharacterBuilder from '../characterBuilder';
 import Character from '../../../src/core/domain/models/character/character';
 import PSQLCharacterWriteRepository
     from '../../../src/adapters/secondaries/PSQL/character/PSQLCharacterWriteRepository';
-import PlayerSnapshot from '../../../src/core/domain/models/player/playerSnapshot';
+import PlayerSnapShotType from '../../../src/core/domain/models/player/types/playerSnapshot';
 
 describe('POST /characters', () => {
     let connection: Connection;
     let player: Player;
-    let playerSnapshot: PlayerSnapshot;
+    let playerSnapshot: PlayerSnapShotType;
     let characterWriteRepository: PSQLCharacterWriteRepository;
     let expectedPresentedCharacter: PresentedCharacterInterface;
     let requestContent: object;

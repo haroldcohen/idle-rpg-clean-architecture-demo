@@ -1,8 +1,8 @@
 import { v4 } from 'uuid';
-import CharacterSnapshot from './characterSnapshot';
 import CharacterDoesNotHaveEnoughSkillPointsException
     from './exceptions/characterDoesNotHaveEnoughSkillPointsException';
 import CharacterNameLengthException from './exceptions/characterNameLengthException';
+import CharacterSnapshotType from './types/characterSnapshot';
 
 export default class Character {
     #id: string;
@@ -56,11 +56,11 @@ export default class Character {
     }
 
     private spendSkillPoints(skillPointsToSpend: number): void {
-        this.canSpendSkillPointsOrDie(skillPointsToSpend);
+        this.canSpendSkillPointsOrThrow(skillPointsToSpend);
         this.#skillPoints -= skillPointsToSpend;
     }
 
-    private canSpendSkillPointsOrDie(skillPointsToSpend: number): void {
+    private canSpendSkillPointsOrThrow(skillPointsToSpend: number): void {
         if (skillPointsToSpend > this.#skillPoints) {
             throw new CharacterDoesNotHaveEnoughSkillPointsException();
         }
@@ -115,8 +115,8 @@ export default class Character {
         }
     }
 
-    snapshot(): CharacterSnapshot {
-        return new CharacterSnapshot({
+    snapshot(): CharacterSnapshotType {
+        return {
             id: this.#id,
             name: this.#name,
             skillPoints: this.#skillPoints,
@@ -125,6 +125,8 @@ export default class Character {
             defensePoints: this.#defensePoints,
             magikPoints: this.#magikPoints,
             playerId: this.#playerId,
-        });
+            rank: 1,
+            level: 1,
+        };
     }
 }

@@ -27,19 +27,19 @@ import InMemoryPlayer from '../../../src/adapters/secondaries/inMemory/player/in
 import { PlayerWriteRepositoryInterface } from '../../../src/core/useCases/player/interfaces/playerWriteRepositoryInterface';
 import InMemoryPlayerWriteRepository
     from '../../../src/adapters/secondaries/inMemory/player/InMemoryPlayerWriteRepository';
-import CharacterSnapshot from '../../../src/core/domain/models/character/characterSnapshot';
-import PlayerSnapshot from '../../../src/core/domain/models/player/playerSnapshot';
+import PlayerSnapShotType from '../../../src/core/domain/models/player/types/playerSnapshot';
+import CharacterSnapshotType from '../../../src/core/domain/models/character/types/characterSnapshot';
 
 
 describe('As a Player, I can create a character that starts at' +
     'level 1, rank 1 with 12 SP, 10 HP, 0 AP, 0 DP, 0 MP.', () => {
     var player: Player;
-    var playerSnapShot: PlayerSnapshot;
+    var playerSnapShot: PlayerSnapShotType;
     var playerId: string;
     var inMemoryPlayersList: InMemoryPlayer[] = [];
     var playerReadRepository: PlayerReadRepositoryInterface;
     var playerWriteRepository: PlayerWriteRepositoryInterface;
-    var expectedCharacter: CharacterSnapshot;
+    var expectedCharacter: CharacterSnapshotType;
     var inMemoryCharactersList: InMemoryCharacter[];
     var characterReadRepository: CharacterReadRepositoryInterface;
     var characterWriteRepository: CharacterWriteRepositoryInterface;
@@ -69,7 +69,7 @@ describe('As a Player, I can create a character that starts at' +
     });
 
     it('When I create a character, it has 10 HP and 12 SP remaining.', async () => {
-        const createdCharacter: CharacterSnapshot =
+        const createdCharacter =
             await new ICreateACharacter(
                 characterWriteRepository,
                 playerReadRepository
@@ -100,7 +100,7 @@ describe('As a Player, I can create a character that starts at' +
             magikPoints: 1,
             playerId,
         };
-        const createdCharacter: CharacterSnapshot =
+        const createdCharacter =
             await new ICreateACharacter(
                 characterWriteRepository,
                 playerReadRepository
@@ -131,7 +131,7 @@ describe('As a Player, I can create a character that starts at' +
             magikPoints: 0,
             playerId,
         };
-        const createdCharacter: CharacterSnapshot =
+        const createdCharacter =
             await new ICreateACharacter(
                 characterWriteRepository,
                 playerReadRepository

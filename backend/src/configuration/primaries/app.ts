@@ -1,5 +1,5 @@
 import express from 'express';
-import charactersRouter from '../adapters/primaries/REST/characters/characters';
+import charactersRouter from '../../adapters/primaries/REST/characters/characters';
 
 const app = express();
 

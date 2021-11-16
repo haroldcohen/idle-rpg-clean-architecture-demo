@@ -15,16 +15,16 @@ import { CharacterReadRepositoryInterface } from '../../../src/core/useCases/cha
 import PSQLCharacterReadRepository from '../../../src/adapters/secondaries/PSQL/character/PSQLCharacterReadRepository';
 import { PlayerReadRepositoryInterface } from '../../../src/core/useCases/player/interfaces/playerReadRepositoryInterface';
 import PSQLPlayerReadRepository from '../../../src/adapters/secondaries/PSQL/player/PSQLPlayerReadRepository';
-import CharacterSnapshot from '../../../src/core/domain/models/character/characterSnapshot';
-import PlayerSnapshot from '../../../src/core/domain/models/player/playerSnapshot';
+import PlayerSnapShotType from '../../../src/core/domain/models/player/types/playerSnapshot';
+import CharacterSnapshotType from '../../../src/core/domain/models/character/types/characterSnapshot';
 
 describe('As a Player, I can create a character that starts at' +
     'level 1, rank 1 with 12 SP, 10 HP, 0 AP, 0 DP, 0 MP.', () => {
     let connection: Connection;
     var player: Player;
-    var playerSnapshot: PlayerSnapshot;
+    var playerSnapshot: PlayerSnapShotType;
     var playerId: string;
-    var expectedCharacter: CharacterSnapshot;
+    var expectedCharacter: CharacterSnapshotType;
     var characterReadRepository: CharacterReadRepositoryInterface;
     var characterWriteRepository: CharacterWriteRepositoryInterface;
     var playerReadRepository: PlayerReadRepositoryInterface;

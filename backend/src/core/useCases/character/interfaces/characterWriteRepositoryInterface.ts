@@ -1,5 +1,5 @@
-import CharacterSnapshot from '../../../domain/models/character/characterSnapshot';
+import CharacterSnapshotType from '../../../domain/models/character/types/characterSnapshot';
 
 export interface CharacterWriteRepositoryInterface {
-    create(characterSnapshot: CharacterSnapshot): void;
+    create(characterSnapshot: CharacterSnapshotType): void;
 }
