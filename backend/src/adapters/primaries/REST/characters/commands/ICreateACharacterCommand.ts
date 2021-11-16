@@ -2,7 +2,7 @@ import { DataTransferObject, IsString, IsInt } from 'data-transfer-object';
 import ICreateACharacterCommandType
     from '../../../../../core/useCases/character/types/ICreateACharacterCommand';
 
-export default class ICreateACharacterCommand extends DataTransferObject implements ICreateACharacterCommandType{
+export default class ICreateACharacterCommand extends DataTransferObject implements ICreateACharacterCommandType {
     @IsString()
     name!: string;
 

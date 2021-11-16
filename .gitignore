@@ -1,7 +1,20 @@
-.idea
-/.env
+# Devops
 docker-compose.override.yaml
+/.env
+
+# Node
 /*/node_modules/
+
+# Tests
+/backend/reports
+/*/.stryker-tmp
+
+# Temporary ignored files
 /*/**/*.BadExample.ts
 /*/**/*.BetterExample.ts
+
+# Misc
 /*/**/*.draft.*.ts
+
+# IDEs
+.idea

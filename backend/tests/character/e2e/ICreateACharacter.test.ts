@@ -154,7 +154,30 @@ describe('POST /characters', () => {
             });
     });
 
-    it('responds with an error message "Invalid request"', async () => {
+    it('responds with an error message ' +
+        '"Invalid request: name must be a string"', async () => {
+        requestContent = {
+            playerId: playerSnapshot.id,
+            name: 1,
+            healthPoints: 10,
+            attackPoints: 0,
+            defensePoints: 0,
+            magikPoints: 0,
+        };
+        await supertest(app)
+            .put('/api/characters')
+            .send(requestContent)
+            .expect(400)
+            .then(async (res: Response) => {
+                expect(res.body.errorMessage).toEqual(
+                    'Invalid request: ' +
+                    'name must be a string'
+                );
+            });
+    });
+
+    it('responds with an error message ' +
+        '"Invalid request: name must be a string, healthPoints must be an integer number"', async () => {
         requestContent = {
             playerId: playerSnapshot.id,
             name: 1,

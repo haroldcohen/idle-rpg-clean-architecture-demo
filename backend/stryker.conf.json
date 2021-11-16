@@ -7,6 +7,6 @@
     "progress",
     "dashboard"
   ],
-  "testRunner": "jest",
+  "commandRunner": { "command": "yarn test unit" },
   "coverageAnalysis": "perTest"
 }
