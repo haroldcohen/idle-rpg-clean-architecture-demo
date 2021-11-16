@@ -2,11 +2,8 @@ import { v4 } from 'uuid';
 import { Connection, createConnection, getRepository } from 'typeorm';
 import config from '../../../src/configuration/secondaries/database/config';
 import Player from '../../../src/core/domain/models/player/player';
-import ICreateACharacterCommandType
-    from '../../../src/core/useCases/character/types/ICreateACharacterCommand';
 import PlayerBuilder from '../../player/playerBuilder';
 import { LegolasCharacterBuilder } from '../legolasCharacterBuilder';
-import ICreateACharacter from '../../../src/core/useCases/character/ICreateACharacter';
 import PSQLPlayer from '../../../src/adapters/secondaries/PSQL/player/PSQLPlayer';
 import { CharacterWriteRepositoryInterface } from '../../../src/core/useCases/character/interfaces/characterWriteRepositoryInterface';
 import PSQLCharacterWriteRepository
@@ -17,9 +14,9 @@ import { PlayerReadRepositoryInterface } from '../../../src/core/useCases/player
 import PSQLPlayerReadRepository from '../../../src/adapters/secondaries/PSQL/player/PSQLPlayerReadRepository';
 import PlayerSnapShotType from '../../../src/core/domain/models/player/types/playerSnapshot';
 import CharacterSnapshotType from '../../../src/core/domain/models/character/types/characterSnapshot';
+import Character from "../../../src/core/domain/models/character/character";
 
-describe('As a Player, I can create a character that starts at' +
-    'level 1, rank 1 with 12 SP, 10 HP, 0 AP, 0 DP, 0 MP.', () => {
+describe('I can create a character', () => {
     let connection: Connection;
     var player: Player;
     var playerSnapshot: PlayerSnapShotType;
@@ -28,7 +25,6 @@ describe('As a Player, I can create a character that starts at' +
     var characterReadRepository: CharacterReadRepositoryInterface;
     var characterWriteRepository: CharacterWriteRepositoryInterface;
     var playerReadRepository: PlayerReadRepositoryInterface;
-    var iCreateACharacterCommand: ICreateACharacterCommandType;
 
     beforeAll(async () => {
         connection = await createConnection(config);
@@ -41,7 +37,7 @@ describe('As a Player, I can create a character that starts at' +
     });
 
     beforeEach(async () => {
-        await connection.synchronize(true);
+        await connection.synchronize();
         player = new PlayerBuilder()
             .withId(v4())
             .build();
@@ -55,24 +51,21 @@ describe('As a Player, I can create a character that starts at' +
         expectedCharacter = new LegolasCharacterBuilder().build().snapshot();
         characterReadRepository = new PSQLCharacterReadRepository();
         characterWriteRepository = new PSQLCharacterWriteRepository();
-        iCreateACharacterCommand = {
+    });
+
+    it('I can create a character', async () => {
+        const characterToCreate = new Character({
             name: 'Legolas',
+            skillPoints: 12,
             healthPoints: 10,
             attackPoints: 0,
             defensePoints: 0,
             magikPoints: 0,
-            playerId
-        };
-    });
-
-    it('When I create a character, it has 10 HP and 12 SP remaining.', async () => {
-        const createdCharacter =
-            await new ICreateACharacter(
-                characterWriteRepository,
-                playerReadRepository,
-            ).execute(iCreateACharacterCommand);
+            playerId,
+        });
+        const characterToCreateSnapshot = characterToCreate.snapshot();
         expectedCharacter = {
-            id: createdCharacter.id,
+            id: characterToCreateSnapshot.id,
             name: 'Legolas',
             skillPoints: 12,
             healthPoints: 10,
@@ -83,8 +76,8 @@ describe('As a Player, I can create a character that starts at' +
             level: 1,
             playerId: playerSnapshot.id,
         };
-        expect(createdCharacter).toEqual(expectedCharacter);
-        const retrievedCharacter = await characterReadRepository.read(createdCharacter.id);
+        await characterWriteRepository.create(characterToCreateSnapshot);
+        const retrievedCharacter = await characterReadRepository.read(characterToCreateSnapshot.id);
         expect(retrievedCharacter.snapshot()).toEqual(expectedCharacter);
     });
 });
