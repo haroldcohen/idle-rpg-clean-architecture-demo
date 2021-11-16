@@ -1,5 +1,5 @@
 import { createConnection } from 'typeorm';
-import connectionOptions from './configuration/database/config';
+import connectionOptions from './configuration/secondaries/database/config';
 
 (async () => {
     await createConnection(connectionOptions);

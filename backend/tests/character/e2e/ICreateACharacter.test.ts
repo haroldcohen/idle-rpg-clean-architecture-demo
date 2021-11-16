@@ -2,7 +2,7 @@
 import supertest, {Response} from 'supertest';
 import app from '../../../src/configuration/primaries/app';
 import {Connection, createConnection, getRepository} from 'typeorm';
-import config from '../../../src/configuration/database/config';
+import config from '../../../src/configuration/secondaries/database/config';
 import PresentedCharacterInterface
     from '../../../src/adapters/primaries/presenters/characters/presentedCharacterInterface';
 import PlayerBuilder from '../../player/playerBuilder';

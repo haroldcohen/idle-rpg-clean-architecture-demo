@@ -1,6 +1,6 @@
 import { v4 } from 'uuid';
 import { Connection, createConnection, getRepository } from 'typeorm';
-import config from '../../../src/configuration/database/config';
+import config from '../../../src/configuration/secondaries/database/config';
 import Player from '../../../src/core/domain/models/player/player';
 import ICreateACharacterCommandType
     from '../../../src/core/useCases/character/types/ICreateACharacterCommand';
