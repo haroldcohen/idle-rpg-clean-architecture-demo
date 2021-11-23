@@ -1,10 +1,10 @@
 import Player from '../../src/core/domain/models/player/player';
-import Character from "../../src/core/domain/models/character/character";
+import Character from '../../src/core/domain/models/character/character';
 
 export default class PlayerBuilder {
-    protected id!: string;
+    id!: string;
 
-    protected characters!: Character[];
+    characters!: Character[];
 
     withId(value: string): PlayerBuilder {
         this.id = value;

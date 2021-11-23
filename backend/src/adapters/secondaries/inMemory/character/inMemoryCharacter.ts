@@ -3,10 +3,6 @@ export default class InMemoryCharacter {
 
     name: string;
 
-    level: number;
-
-    rank: number;
-
     skillPoints: number;
 
     healthPoints: number;
@@ -22,8 +18,6 @@ export default class InMemoryCharacter {
     constructor({
         id,
         name,
-        level,
-        rank,
         skillPoints,
         healthPoints,
         attackPoints,
@@ -33,8 +27,6 @@ export default class InMemoryCharacter {
     }:{
         id: string,
         name: string,
-        level: number,
-        rank: number,
         skillPoints: number,
         healthPoints: number,
         attackPoints: number,
@@ -44,8 +36,6 @@ export default class InMemoryCharacter {
     }) {
         this.id = id;
         this.name = name;
-        this.level = level;
-        this.rank = rank;
         this.skillPoints = skillPoints;
         this.healthPoints = healthPoints;
         this.attackPoints = attackPoints;

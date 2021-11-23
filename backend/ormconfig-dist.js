@@ -1,4 +1,4 @@
 module.exports = {
-    ...require('./dist/configuration/database/config').default,
-    migrations: ['dist/configuration/database/migrations/*.ts'],
+    ...require('./dist/configuration/secondaries/database/config').default,
+    migrations: ['dist/configuration/secondaries/database/migrations/*.ts'],
 };

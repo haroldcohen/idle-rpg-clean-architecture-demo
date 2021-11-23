@@ -1,19 +1,19 @@
 import Character from '../../src/core/domain/models/character/character';
 
 export default class CharacterBuilder {
-    protected name!: string;
+    name!: string;
 
-    protected skillPoints!: number;
+    skillPoints!: number;
 
-    protected healthPoints!: number;
+    healthPoints!: number;
 
-    protected attackPoints!: number;
+    attackPoints!: number;
 
-    protected defensePoints!: number;
+    defensePoints!: number;
 
-    protected magikPoints!: number;
+    magikPoints!: number;
 
-    protected playerId!: string;
+    playerId!: string;
 
     withName(value: string): CharacterBuilder {
         this.name = value;

@@ -1,9 +1,9 @@
 require('ts-node').register();
 
 module.exports = {
-    ...require('./src/configuration/database/config').default,
-    migrations: ['src/configuration/database/migrations/*.ts'],
+    ...require('./src/configuration/secondaries/database/config').default,
+    migrations: ['src/configuration/secondaries/database/migrations/*.ts'],
     cli: {
-        migrationsDir: 'src/configuration/database/migrations',
+        migrationsDir: 'src/configuration/secondaries/database/migrations',
     },
 };

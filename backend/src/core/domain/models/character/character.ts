@@ -2,6 +2,7 @@ import { v4 } from 'uuid';
 import CharacterDoesNotHaveEnoughSkillPointsException
     from './exceptions/characterDoesNotHaveEnoughSkillPointsException';
 import CharacterNameLengthException from './exceptions/characterNameLengthException';
+import CharacterSnapshot from './snapshot';
 
 export default class Character {
     #id: string;
@@ -54,62 +55,25 @@ export default class Character {
         }
     }
 
-    get id(): string {
-        return this.#id;
-    }
-
-    get name(): string {
-        return this.#name;
-    }
-
-    get level(): number {
-        return 1;
-    }
-
-    get rank(): number {
-        return 1;
-    }
-
-    get skillPoints(): number {
-        return this.#skillPoints;
-    }
-
-    get healthPoints(): number {
-        return this.#healthPoints;
-    }
-
-    get attackPoints(): number {
-        return this.#attackPoints;
-    }
-
-    get defensePoints(): number {
-        return this.#defensePoints;
-    }
-
-    get magikPoints(): number {
-        return this.#magikPoints;
-    }
-
-    get playerId(): string {
-        return this.#playerId;
-    }
-
     private spendSkillPoints(skillPointsToSpend: number): void {
-        this.canSpendSkillPointsOrDie(skillPointsToSpend);
+        this.canSpendSkillPointsOrThrow(skillPointsToSpend);
         this.#skillPoints -= skillPointsToSpend;
     }
 
-    private canSpendSkillPointsOrDie(skillPointsToSpend: number): void {
+    private canSpendSkillPointsOrThrow(skillPointsToSpend: number): void {
         if (skillPointsToSpend > this.#skillPoints) {
             throw new CharacterDoesNotHaveEnoughSkillPointsException();
         }
     }
 
-    levelUpHealthPoints(healthPoints: number): void {
-        if (healthPoints > this.#healthPoints) {
-            this.spendSkillPoints(healthPoints - this.#healthPoints);
-            this.#healthPoints = healthPoints;
-        }
+    levelUpSkills(healthPoints: number,
+        attackPoints: number,
+        defensePoints: number,
+        magikPoints: number): void {
+        this.levelUpHealthPoints(healthPoints);
+        this.levelUpAttackPoints(attackPoints);
+        this.levelUpDefensePoints(defensePoints);
+        this.levelUpMagikPoints(magikPoints);
     }
 
     private static computeSkillPointsToSpend(currentLevel: number, targetLevel: number): number {
@@ -123,24 +87,44 @@ export default class Character {
         return skillsPointsToSpend;
     }
 
-    levelUpAttackPoints(attackPoints: number): void {
+    private levelUpHealthPoints(healthPoints: number): void {
+        if (healthPoints > this.#healthPoints) {
+            this.spendSkillPoints(healthPoints - this.#healthPoints);
+            this.#healthPoints = healthPoints;
+        }
+    }
+
+    private levelUpAttackPoints(attackPoints: number): void {
         if (attackPoints > this.#attackPoints) {
             this.spendSkillPoints(Character.computeSkillPointsToSpend(this.#attackPoints, attackPoints));
             this.#attackPoints = attackPoints;
         }
     }
 
-    levelUpDefensePoints(defensePoints: number): void {
+    private levelUpDefensePoints(defensePoints: number): void {
         if (defensePoints > this.#defensePoints) {
             this.spendSkillPoints(Character.computeSkillPointsToSpend(this.#defensePoints, defensePoints));
             this.#defensePoints = defensePoints;
         }
     }
 
-    levelUpMagikPoints(magikPoints: number): void {
+    private levelUpMagikPoints(magikPoints: number): void {
         if (magikPoints > this.#magikPoints) {
             this.spendSkillPoints(Character.computeSkillPointsToSpend(this.#magikPoints, magikPoints));
             this.#magikPoints = magikPoints;
         }
+    }
+
+    snapshot(): CharacterSnapshot {
+        return new CharacterSnapshot({
+            id: this.#id,
+            name: this.#name,
+            skillPoints: this.#skillPoints,
+            healthPoints: this.#healthPoints,
+            attackPoints: this.#attackPoints,
+            defensePoints: this.#defensePoints,
+            magikPoints: this.#magikPoints,
+            playerId: this.#playerId,
+        });
     }
 }

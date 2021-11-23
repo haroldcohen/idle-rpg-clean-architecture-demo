@@ -1,4 +1,13 @@
-.idea
-/.env
+# Devops
 docker-compose.override.yaml
+/.env
+
+# Node
 /*/node_modules/
+
+# Tests
+/backend/reports
+/*/.stryker-tmp
+
+# IDEs
+.idea

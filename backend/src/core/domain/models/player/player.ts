@@ -1,6 +1,8 @@
 import Character from '../character/character';
 import CharacterLimitReachedException from '../character/exceptions/characterLimitReachedException';
 import CharacterNameAlreadyTakenException from '../character/exceptions/characterNameAlreadyTakenException';
+import CharacterSnapshot from '../character/snapshot';
+import PlayerSnapshot from './snapshot';
 
 export default class Player {
     #id: string;
@@ -14,20 +16,19 @@ export default class Player {
         this.#characters = characters;
     }
 
-    get id(): string {
-        return this.#id;
-    }
-
-    get characters(): Character[] {
-        return this.#characters;
-    }
-
-    playerCanCreateCharacterOrDie(character: Character): void {
+    canCreateCharacterOrThrow(character: CharacterSnapshot): void {
         if (this.#characters.length >= 10) {
             throw new CharacterLimitReachedException();
         }
-        if (this.#characters.filter((c) => c.name === character.name).length) {
+        if (this.#characters.filter((c) => c.snapshot().name === character.name).length) {
             throw new CharacterNameAlreadyTakenException();
         }
+    }
+
+    snapshot(): PlayerSnapshot {
+        return {
+            id: this.#id,
+            characters: this.#characters.map((c) => c.snapshot()),
+        };
     }
 }
