@@ -2,7 +2,7 @@ import { v4 } from 'uuid';
 import CharacterDoesNotHaveEnoughSkillPointsException
     from './exceptions/characterDoesNotHaveEnoughSkillPointsException';
 import CharacterNameLengthException from './exceptions/characterNameLengthException';
-import CharacterSnapshotType from './types/characterSnapshot';
+import CharacterSnapshot from './snapshot';
 
 export default class Character {
     #id: string;
@@ -115,8 +115,8 @@ export default class Character {
         }
     }
 
-    snapshot(): CharacterSnapshotType {
-        return {
+    snapshot(): CharacterSnapshot {
+        return new CharacterSnapshot({
             id: this.#id,
             name: this.#name,
             skillPoints: this.#skillPoints,
@@ -125,8 +125,6 @@ export default class Character {
             defensePoints: this.#defensePoints,
             magikPoints: this.#magikPoints,
             playerId: this.#playerId,
-            rank: 1,
-            level: 1,
-        };
+        });
     }
 }

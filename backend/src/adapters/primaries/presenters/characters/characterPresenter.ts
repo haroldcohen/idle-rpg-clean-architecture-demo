@@ -1,8 +1,8 @@
-import CharacterSnapshotType from '../../../../core/domain/models/character/types/characterSnapshot';
 import PresentedCharacterInterface from './presentedCharacterInterface';
+import CharacterSnapshot from '../../../../core/domain/models/character/snapshot';
 
 export default class CharacterPresenter {
-    static present(characterSnapShot: CharacterSnapshotType): PresentedCharacterInterface {
+    static present(characterSnapShot: CharacterSnapshot): PresentedCharacterInterface {
         return {
             id: characterSnapShot.id,
             name: characterSnapShot.name,

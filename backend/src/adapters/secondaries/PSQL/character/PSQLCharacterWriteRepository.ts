@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
 import { getRepository } from 'typeorm';
-import CharacterSnapshotType from '../../../../core/domain/models/character/types/characterSnapshot';
+import CharacterSnapshot from '../../../../core/domain/models/character/snapshot';
 import {
     CharacterWriteRepositoryInterface,
 } from '../../../../core/useCases/character/interfaces/characterWriteRepositoryInterface';
@@ -9,7 +9,7 @@ import PSQLCharacter from './PSQLCharacter';
 
 @injectable()
 export default class PSQLCharacterWriteRepository implements CharacterWriteRepositoryInterface {
-    async create(characterSnapshot: CharacterSnapshotType): Promise<void> {
+    async create(characterSnapshot: CharacterSnapshot): Promise<void> {
         const PSQLCharacterToCreate = new PSQLCharacter(
             characterSnapshot.id,
             characterSnapshot.name,

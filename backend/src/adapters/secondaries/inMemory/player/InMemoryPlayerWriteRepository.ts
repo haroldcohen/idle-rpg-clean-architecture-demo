@@ -1,4 +1,4 @@
-import PlayerSnapShotType from '../../../../core/domain/models/player/types/playerSnapshot';
+import PlayerSnapshot from '../../../../core/domain/models/player/snapshot';
 import {
     PlayerWriteRepositoryInterface,
 } from '../../../../core/useCases/player/interfaces/playerWriteRepositoryInterface';
@@ -12,7 +12,7 @@ export default class InMemoryPlayerWriteRepository implements PlayerWriteReposit
         this.players = players;
     }
 
-    async create(playerSnapshot: PlayerSnapShotType): Promise<void> {
+    async create(playerSnapshot: PlayerSnapshot): Promise<void> {
         const playerToCreate = new InMemoryPlayer({
             id: playerSnapshot.id,
             characters: playerSnapshot.characters.map((c) => new InMemoryCharacter(c)),

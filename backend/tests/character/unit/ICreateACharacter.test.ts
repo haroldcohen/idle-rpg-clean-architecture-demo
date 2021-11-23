@@ -27,19 +27,19 @@ import InMemoryPlayer from '../../../src/adapters/secondaries/inMemory/player/in
 import { PlayerWriteRepositoryInterface } from '../../../src/core/useCases/player/interfaces/playerWriteRepositoryInterface';
 import InMemoryPlayerWriteRepository
     from '../../../src/adapters/secondaries/inMemory/player/InMemoryPlayerWriteRepository';
-import PlayerSnapShotType from '../../../src/core/domain/models/player/types/playerSnapshot';
-import CharacterSnapshotType from '../../../src/core/domain/models/character/types/characterSnapshot';
+import CharacterSnapshot from "../../../src/core/domain/models/character/snapshot";
+import PlayerSnapshot from "../../../src/core/domain/models/player/snapshot";
 
 
 describe('As a Player, I can create a character that starts at' +
     'level 1, rank 1 with 12 SP, 10 HP, 0 AP, 0 DP, 0 MP.', () => {
     var player: Player;
-    var playerSnapShot: PlayerSnapShotType;
+    var playerSnapShot: PlayerSnapshot;
     var playerId: string;
     var inMemoryPlayersList: InMemoryPlayer[] = [];
     var playerReadRepository: PlayerReadRepositoryInterface;
     var playerWriteRepository: PlayerWriteRepositoryInterface;
-    var expectedCharacter: CharacterSnapshotType;
+    var expectedCharacter: CharacterSnapshot;
     var inMemoryCharactersList: InMemoryCharacter[];
     var characterReadRepository: CharacterReadRepositoryInterface;
     var characterWriteRepository: CharacterWriteRepositoryInterface;

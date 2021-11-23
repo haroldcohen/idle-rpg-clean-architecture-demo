@@ -14,12 +14,12 @@ import CharacterBuilder from '../characterBuilder';
 import Character from '../../../src/core/domain/models/character/character';
 import PSQLCharacterWriteRepository
     from '../../../src/adapters/secondaries/PSQL/character/PSQLCharacterWriteRepository';
-import PlayerSnapShotType from '../../../src/core/domain/models/player/types/playerSnapshot';
+import PlayerSnapshot from '../../../src/core/domain/models/player/snapshot';
 
-describe('POST /characters', () => {
+describe('PUT /characters', () => {
     let connection: Connection;
     let player: Player;
-    let playerSnapshot: PlayerSnapShotType;
+    let playerSnapshot: PlayerSnapshot;
     let characterWriteRepository: PSQLCharacterWriteRepository;
     let expectedPresentedCharacter: PresentedCharacterInterface;
     let requestContent: object;

@@ -1,8 +1,8 @@
 import Character from '../character/character';
 import CharacterLimitReachedException from '../character/exceptions/characterLimitReachedException';
 import CharacterNameAlreadyTakenException from '../character/exceptions/characterNameAlreadyTakenException';
-import CharacterSnapshotType from '../character/types/characterSnapshot';
-import PlayerSnapShotType from './types/playerSnapshot';
+import CharacterSnapshot from '../character/snapshot';
+import PlayerSnapshot from './snapshot';
 
 export default class Player {
     #id: string;
@@ -16,7 +16,7 @@ export default class Player {
         this.#characters = characters;
     }
 
-    canCreateCharacterOrThrow(character: CharacterSnapshotType): void {
+    canCreateCharacterOrThrow(character: CharacterSnapshot): void {
         if (this.#characters.length >= 10) {
             throw new CharacterLimitReachedException();
         }
@@ -25,7 +25,7 @@ export default class Player {
         }
     }
 
-    snapshot(): PlayerSnapShotType {
+    snapshot(): PlayerSnapshot {
         return {
             id: this.#id,
             characters: this.#characters.map((c) => c.snapshot()),

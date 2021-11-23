@@ -1,5 +1,5 @@
 import Character from '../../domain/models/character/character';
-import CharacterSnapshotType from '../../domain/models/character/types/characterSnapshot';
+import CharacterSnapshot from '../../domain/models/character/snapshot';
 import { PlayerReadRepositoryInterface } from '../player/interfaces/playerReadRepositoryInterface';
 import { CharacterWriteRepositoryInterface } from './interfaces/characterWriteRepositoryInterface';
 import ICreateACharacterCommandType from './types/ICreateACharacterCommand';
@@ -19,7 +19,7 @@ export default class ICreateACharacter {
 
     async execute(
         command: ICreateACharacterCommandType,
-    ): Promise<CharacterSnapshotType> {
+    ): Promise<CharacterSnapshot> {
         const { name, healthPoints, attackPoints, defensePoints, magikPoints, playerId } = command;
         const characterToCreate = new Character({
             name,

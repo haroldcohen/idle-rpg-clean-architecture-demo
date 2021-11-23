@@ -9,12 +9,5 @@ docker-compose.override.yaml
 /backend/reports
 /*/.stryker-tmp
 
-# Temporary ignored files
-/*/**/*.BadExample.ts
-/*/**/*.BetterExample.ts
-
-# Misc
-/*/**/*.draft.*.ts
-
 # IDEs
 .idea
