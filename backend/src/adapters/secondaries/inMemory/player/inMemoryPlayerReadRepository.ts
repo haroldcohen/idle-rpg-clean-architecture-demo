@@ -2,31 +2,34 @@ import Player from '../../../../core/domain/models/player/player';
 import {
     PlayerReadRepositoryInterface,
 } from '../../../../core/useCases/player/interfaces/playerReadRepositoryInterface';
+import InMemoryCharacter from '../character/inMemoryCharacter';
 import InMemoryCharacterReadRepository from '../character/inMemoryCharacterReadRepository';
+import InMemoryDataBase from '../common/inMemoryDataBase';
 import InMemoryPlayer from './inMemoryPlayer';
 
 export default class InMemoryPlayerReadRepository implements PlayerReadRepositoryInterface {
-    players: InMemoryPlayer[];
+    database: InMemoryDataBase;
 
-    constructor(players: InMemoryPlayer[]) {
-        this.players = players;
+    constructor(database: InMemoryDataBase) {
+        this.database = database;
     }
 
-    static inMemoryPlayerToPlayer(inMemoryPlayer: InMemoryPlayer): Player {
+    static toPlayer(inMemoryPlayer: InMemoryPlayer, inMemoryCharacters: InMemoryCharacter[]): Player {
         return new Player({
             id: inMemoryPlayer.id,
-            characters: inMemoryPlayer.characters.map(
-                (p) => InMemoryCharacterReadRepository.inMemoryCharacterToCharacter(p),
+            characters: inMemoryCharacters.map(
+                (c) => InMemoryCharacterReadRepository.toCharacter(c),
             ),
         });
     }
 
     async read(playerId: string): Promise<Player> {
-        const filtered = this.players.filter((p) => p.id === playerId).pop();
-        if (!filtered) {
+        const retrievedPlayer = this.database.players.filter((p) => p.id === playerId).pop();
+        if (!retrievedPlayer) {
             throw Error('Player does not exist');
         }
+        const retrievedCharacters = this.database.characters.filter((c:InMemoryCharacter) => c.playerId === playerId);
 
-        return InMemoryPlayerReadRepository.inMemoryPlayerToPlayer(filtered);
+        return InMemoryPlayerReadRepository.toPlayer(retrievedPlayer, retrievedCharacters);
     }
 }

@@ -1,30 +1,31 @@
 import Character from '../../domain/models/character/character';
-import CharacterSnapshot from '../../domain/models/character/snapshot';
+import CharacterDto from '../../domain/models/character/dto';
 import { Uuid4GeneratorInterface } from '../common/interfaces/uuid4GeneratorInterface';
 import { PlayerReadRepositoryInterface } from '../player/interfaces/playerReadRepositoryInterface';
+import { PlayerWriteRepositoryInterface } from '../player/interfaces/playerWriteRepositoryInterface';
 import { CharacterWriteRepositoryInterface } from './interfaces/characterWriteRepositoryInterface';
 import ICreateACharacterCommandType from './types/ICreateACharacterCommand';
 
 export default class ICreateACharacter {
-    #characterWriteRepository: CharacterWriteRepositoryInterface;
-
     #playerReadRepository: PlayerReadRepositoryInterface;
+
+    #playerWriteRepository: PlayerWriteRepositoryInterface;
 
     #uuid4Generator: Uuid4GeneratorInterface;
 
     constructor(
-        characterWriteRepository: CharacterWriteRepositoryInterface,
         playerReadRepository: PlayerReadRepositoryInterface,
+        playerWriteRepository: PlayerWriteRepositoryInterface,
         uuid4Generator: Uuid4GeneratorInterface,
     ) {
-        this.#characterWriteRepository = characterWriteRepository;
         this.#playerReadRepository = playerReadRepository;
+        this.#playerWriteRepository = playerWriteRepository;
         this.#uuid4Generator = uuid4Generator;
     }
 
     async execute(
         command: ICreateACharacterCommandType,
-    ): Promise<CharacterSnapshot> {
+    ): Promise<CharacterDto> {
         const { name, healthPoints, attackPoints, defensePoints, magikPoints, playerId } = command;
         const characterToCreate = new Character({
             id: this.#uuid4Generator.generate(),
@@ -43,10 +44,10 @@ export default class ICreateACharacter {
             magikPoints,
         );
         const player = await this.#playerReadRepository.read(playerId);
-        player.canCreateCharacterOrThrow(characterToCreate.snapshot());
+        player.addCharacter(characterToCreate);
 
-        await this.#characterWriteRepository.create(characterToCreate.snapshot());
+        await this.#playerWriteRepository.update(player.toDto());
 
-        return characterToCreate.snapshot();
+        return characterToCreate.toDto();
     }
 }

@@ -14,12 +14,12 @@ import CharacterBuilder from '../characterBuilder';
 import Character from '../../../src/core/domain/models/character/character';
 import PSQLCharacterWriteRepository
     from '../../../src/adapters/secondaries/PSQL/character/PSQLCharacterWriteRepository';
-import PlayerSnapshot from '../../../src/core/domain/models/player/snapshot';
+import PlayerDto from '../../../src/core/domain/models/player/dto';
 
 describe('PUT /characters', () => {
     let connection: Connection;
     let player: Player;
-    let playerSnapshot: PlayerSnapshot;
+    let playerSnapshot: PlayerDto;
     let characterWriteRepository: PSQLCharacterWriteRepository;
     let expectedPresentedCharacter: PresentedCharacterInterface;
     let requestContent: object;
@@ -50,7 +50,7 @@ describe('PUT /characters', () => {
         player = new PlayerBuilder()
             .withId(v4())
             .build();
-        playerSnapshot = player.snapshot();
+        playerSnapshot = player.toDto();
         const pSQLPlayer = new PSQLPlayer(playerSnapshot.id);
         await getRepository(PSQLPlayer)
             .create(pSQLPlayer)
@@ -100,7 +100,7 @@ describe('PUT /characters', () => {
         const legolasCharacter = new LegolasCharacterBuilder()
             .withPlayerId(playerSnapshot.id)
             .build();
-        await characterWriteRepository.create(legolasCharacter.snapshot());
+        await characterWriteRepository.create(legolasCharacter.toDto());
         requestContent = {
             playerId: playerSnapshot.id,
             name: 'Legolas',
@@ -134,7 +134,7 @@ describe('PUT /characters', () => {
             ];
         }
         const createCharacters = async (charactersToCreate: Character[]) => {
-            await Promise.all(charactersToCreate.map(async (c) => await characterWriteRepository.create(c.snapshot())));
+            await Promise.all(charactersToCreate.map(async (c) => await characterWriteRepository.create(c.toDto())));
         }
         await createCharacters(charactersToCreate());
         requestContent = {

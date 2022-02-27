@@ -1,4 +1,4 @@
-export default class CharacterSnapshot {
+export default class CharacterDto {
     readonly id: string;
 
     readonly name: string;

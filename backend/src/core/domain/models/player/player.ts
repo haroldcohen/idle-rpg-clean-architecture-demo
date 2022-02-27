@@ -1,8 +1,8 @@
 import Character from '../character/character';
+import CharacterDto from '../character/dto';
 import CharacterLimitReachedException from '../character/exceptions/characterLimitReachedException';
 import CharacterNameAlreadyTakenException from '../character/exceptions/characterNameAlreadyTakenException';
-import CharacterSnapshot from '../character/snapshot';
-import PlayerSnapshot from './snapshot';
+import PlayerDto from './dto';
 
 export default class Player {
     #id: string;
@@ -16,19 +16,24 @@ export default class Player {
         this.#characters = characters;
     }
 
-    canCreateCharacterOrThrow(character: CharacterSnapshot): void {
+    addCharacter(character: Character): void {
+        this.mayAddCharacter(character.toDto());
+        this.#characters.push(character);
+    }
+
+    private mayAddCharacter(character: CharacterDto): void {
         if (this.#characters.length >= 10) {
             throw new CharacterLimitReachedException();
         }
-        if (this.#characters.filter((c) => c.snapshot().name === character.name).length) {
+        if (this.#characters.filter((c) => c.toDto().name === character.name).length) {
             throw new CharacterNameAlreadyTakenException();
         }
     }
 
-    snapshot(): PlayerSnapshot {
+    toDto(): PlayerDto {
         return {
             id: this.#id,
-            characters: this.#characters.map((c) => c.snapshot()),
+            characters: this.#characters.map((c) => c.toDto()),
         };
     }
 }

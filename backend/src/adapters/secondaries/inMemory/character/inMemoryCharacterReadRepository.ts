@@ -2,16 +2,17 @@ import Character from '../../../../core/domain/models/character/character';
 import {
     CharacterReadRepositoryInterface,
 } from '../../../../core/useCases/character/interfaces/characterReadRepositoryInterface';
+import InMemoryDataBase from '../common/inMemoryDataBase';
 import InMemoryCharacter from './inMemoryCharacter';
 
 export default class InMemoryCharacterReadRepository implements CharacterReadRepositoryInterface {
-    characters: InMemoryCharacter[];
+    database: InMemoryDataBase;
 
-    constructor(characters: InMemoryCharacter[]) {
-        this.characters = characters;
+    constructor(database: InMemoryDataBase) {
+        this.database = database;
     }
 
-    static inMemoryCharacterToCharacter(inMemoryCharacter: InMemoryCharacter): Character {
+    static toCharacter(inMemoryCharacter: InMemoryCharacter): Character {
         return new Character({
             id: inMemoryCharacter.id,
             name: inMemoryCharacter.name,
@@ -25,17 +26,17 @@ export default class InMemoryCharacterReadRepository implements CharacterReadRep
     }
 
     async read(characterId: string): Promise<Character> {
-        const filtered = this.characters.filter((c) => c.id === characterId).pop();
+        const filtered = this.database.characters.filter((c) => c.id === characterId).pop();
         if (!filtered) {
             throw Error('Character does not exist');
         }
 
-        return InMemoryCharacterReadRepository.inMemoryCharacterToCharacter(filtered);
+        return InMemoryCharacterReadRepository.toCharacter(filtered);
     }
 
     async all(): Promise<Character[]> {
-        return this.characters.map(
-            (inMemoryCharacter) => InMemoryCharacterReadRepository.inMemoryCharacterToCharacter(inMemoryCharacter),
+        return this.database.characters.map(
+            (inMemoryCharacter) => InMemoryCharacterReadRepository.toCharacter(inMemoryCharacter),
         );
     }
 }

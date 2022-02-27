@@ -1,7 +1,7 @@
 import CharacterDoesNotHaveEnoughSkillPointsException
     from './exceptions/characterDoesNotHaveEnoughSkillPointsException';
 import CharacterNameLengthException from './exceptions/characterNameLengthException';
-import CharacterSnapshot from './snapshot';
+import CharacterDto from './dto';
 
 export default class Character {
     #id: string;
@@ -114,8 +114,8 @@ export default class Character {
         }
     }
 
-    snapshot(): CharacterSnapshot {
-        return new CharacterSnapshot({
+    toDto(): CharacterDto {
+        return new CharacterDto({
             id: this.#id,
             name: this.#name,
             skillPoints: this.#skillPoints,

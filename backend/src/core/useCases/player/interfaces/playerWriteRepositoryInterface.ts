@@ -1,5 +1,6 @@
-import PlayerSnapshot from '../../../domain/models/player/snapshot';
+import PlayerDto from '../../../domain/models/player/dto';
 
 export interface PlayerWriteRepositoryInterface {
-    create(player: PlayerSnapshot): Promise<void>
+    create(player: PlayerDto): Promise<void>
+    update(player: PlayerDto): Promise<void>
 }

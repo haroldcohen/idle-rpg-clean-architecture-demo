@@ -13,15 +13,15 @@ import PSQLCharacterReadRepository from '../../../src/adapters/secondaries/PSQL/
 import { PlayerReadRepositoryInterface } from '../../../src/core/useCases/player/interfaces/playerReadRepositoryInterface';
 import PSQLPlayerReadRepository from '../../../src/adapters/secondaries/PSQL/player/PSQLPlayerReadRepository';
 import Character from "../../../src/core/domain/models/character/character";
-import CharacterSnapshot from "../../../src/core/domain/models/character/snapshot";
-import PlayerSnapshot from "../../../src/core/domain/models/player/snapshot";
+import CharacterDto from "../../../src/core/domain/models/character/dto";
+import PlayerDto from "../../../src/core/domain/models/player/dto";
 
 describe('I can create a character', () => {
     let connection: Connection;
     var player: Player;
-    var playerSnapshot: PlayerSnapshot;
+    var playerSnapshot: PlayerDto;
     var playerId: string;
-    var expectedCharacter: CharacterSnapshot;
+    var expectedCharacter: CharacterDto;
     var characterReadRepository: CharacterReadRepositoryInterface;
     var characterWriteRepository: CharacterWriteRepositoryInterface;
     var playerReadRepository: PlayerReadRepositoryInterface;
@@ -41,14 +41,14 @@ describe('I can create a character', () => {
         player = new PlayerBuilder()
             .withId(v4())
             .build();
-        playerSnapshot = player.snapshot();
+        playerSnapshot = player.toDto();
         const pSQLPlayer = new PSQLPlayer(playerSnapshot.id);
         await getRepository(PSQLPlayer)
             .create(pSQLPlayer)
             .save();
         playerId = playerSnapshot.id;
         playerReadRepository = new PSQLPlayerReadRepository();
-        expectedCharacter = new LegolasCharacterBuilder().build().snapshot();
+        expectedCharacter = new LegolasCharacterBuilder().build().toDto();
         characterReadRepository = new PSQLCharacterReadRepository();
         characterWriteRepository = new PSQLCharacterWriteRepository();
     });
@@ -63,7 +63,7 @@ describe('I can create a character', () => {
             magikPoints: 0,
             playerId,
         });
-        const characterToCreateSnapshot = characterToCreate.snapshot();
+        const characterToCreateSnapshot = characterToCreate.toDto();
         expectedCharacter = {
             id: characterToCreateSnapshot.id,
             name: 'Legolas',
@@ -78,6 +78,6 @@ describe('I can create a character', () => {
         };
         await characterWriteRepository.create(characterToCreateSnapshot);
         const retrievedCharacter = await characterReadRepository.read(characterToCreateSnapshot.id);
-        expect(retrievedCharacter.snapshot()).toEqual(expectedCharacter);
+        expect(retrievedCharacter.toDto()).toEqual(expectedCharacter);
     });
 });

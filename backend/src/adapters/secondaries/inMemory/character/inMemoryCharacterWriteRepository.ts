@@ -1,18 +1,19 @@
-import CharacterSnapshot from '../../../../core/domain/models/character/snapshot';
+import CharacterDto from '../../../../core/domain/models/character/dto';
 import {
     CharacterWriteRepositoryInterface,
 } from '../../../../core/useCases/character/interfaces/characterWriteRepositoryInterface';
+import InMemoryDataBase from '../common/inMemoryDataBase';
 import InMemoryCharacter from './inMemoryCharacter';
 
 export default class InMemoryCharacterWriteRepository implements CharacterWriteRepositoryInterface {
-    characters: InMemoryCharacter[];
+    database: InMemoryDataBase;
 
-    constructor(inMemoryCharacters: InMemoryCharacter[]) {
-        this.characters = inMemoryCharacters;
+    constructor(database: InMemoryDataBase) {
+        this.database = database;
     }
 
-    async create(characterSnapshot: CharacterSnapshot): Promise<void> {
-        const createdCharacter = new InMemoryCharacter(characterSnapshot);
-        this.characters.push(createdCharacter);
+    async create(characterDto: CharacterDto): Promise<void> {
+        const createdCharacter = new InMemoryCharacter(characterDto);
+        this.database.characters.push(createdCharacter);
     }
 }

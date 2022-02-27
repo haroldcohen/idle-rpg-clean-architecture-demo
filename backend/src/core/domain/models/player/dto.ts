@@ -1,9 +1,9 @@
-import CharacterSnapshot from '../character/snapshot';
+import CharacterDto from '../character/dto';
 
-export default class PlayerSnapshot {
+export default class PlayerDto {
     readonly id: string;
 
-    readonly characters: CharacterSnapshot[];
+    readonly characters: CharacterDto[];
 
     public constructor(
         {
@@ -11,7 +11,7 @@ export default class PlayerSnapshot {
             characters,
         }: {
             id: string,
-            characters: CharacterSnapshot[],
+            characters: CharacterDto[],
             skillPoints: number,
             healthPoints: number,
             attackPoints: number,

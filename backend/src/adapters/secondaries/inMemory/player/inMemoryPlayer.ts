@@ -1,18 +1,16 @@
-import InMemoryCharacter from '../character/inMemoryCharacter';
-
 export default class InMemoryPlayer {
     id: string;
 
-    characters: InMemoryCharacter[];
+    charactersIds: string[];
 
     constructor({
         id,
-        characters,
+        charactersIds,
     }:{
         id: string,
-        characters: InMemoryCharacter[]
+        charactersIds: string[]
     }) {
         this.id = id;
-        this.characters = characters;
+        this.charactersIds = charactersIds;
     }
 }
