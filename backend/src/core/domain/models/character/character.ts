@@ -1,4 +1,3 @@
-import { v4 } from 'uuid';
 import CharacterDoesNotHaveEnoughSkillPointsException
     from './exceptions/characterDoesNotHaveEnoughSkillPointsException';
 import CharacterNameLengthException from './exceptions/characterNameLengthException';
@@ -32,7 +31,7 @@ export default class Character {
             magikPoints,
             playerId,
         }:{
-            id?: string,
+            id: string,
             name: string,
             skillPoints: number,
             healthPoints: number,
@@ -42,7 +41,7 @@ export default class Character {
             playerId: string,
         },
     ) {
-        this.#id = id || v4();
+        this.#id = id;
         this.#name = name;
         this.#healthPoints = healthPoints;
         this.#skillPoints = skillPoints;
