@@ -18,7 +18,6 @@ export default class PSQLCharacterWriteRepository implements CharacterWriteRepos
             characterSnapshot.attackPoints,
             characterSnapshot.defensePoints,
             characterSnapshot.magikPoints,
-            new PSQLPlayer(characterSnapshot.playerId),
         );
         await getRepository(PSQLCharacter)
             .create(PSQLCharacterToCreate)

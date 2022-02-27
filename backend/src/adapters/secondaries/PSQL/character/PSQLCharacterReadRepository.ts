@@ -5,7 +5,7 @@ import PSQLCharacter from './PSQLCharacter';
 
 @injectable()
 export default class PSQLCharacterReadRepository {
-    static PSQLCharacterToCharacter(pSQLCharacter: PSQLCharacter): Character {
+    static toCharacter(pSQLCharacter: PSQLCharacter): Character {
         return new Character({
             id: pSQLCharacter.id,
             name: pSQLCharacter.name,
@@ -25,13 +25,13 @@ export default class PSQLCharacterReadRepository {
             .where('character.id = :characterId', { characterId })
             .getOneOrFail();
 
-        return PSQLCharacterReadRepository.PSQLCharacterToCharacter(retrievedCharacter);
+        return PSQLCharacterReadRepository.toCharacter(retrievedCharacter);
     }
 
     async all(): Promise<Character[]> {
         const retrievedCharacters = await getRepository(PSQLCharacter)
             .createQueryBuilder().getMany();
 
-        return retrievedCharacters.map((c) => PSQLCharacterReadRepository.PSQLCharacterToCharacter(c));
+        return retrievedCharacters.map((c) => PSQLCharacterReadRepository.toCharacter(c));
     }
 }

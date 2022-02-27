@@ -9,10 +9,10 @@ import PSQLPlayer from './PSQLPlayer';
 
 @injectable()
 export default class PSQLPlayerReadRepository implements PlayerReadRepositoryInterface {
-    static PSQLPlayerToPlayer(pSQLPlayer: PSQLPlayer): Player {
+    static toPlayer(pSQLPlayer: PSQLPlayer): Player {
         return new Player({
             id: pSQLPlayer.id,
-            characters: pSQLPlayer.characters.map((p) => PSQLCharacterReadRepository.PSQLCharacterToCharacter(p)),
+            characters: pSQLPlayer.characters.map((p) => PSQLCharacterReadRepository.toCharacter(p)),
         });
     }
 
@@ -24,6 +24,6 @@ export default class PSQLPlayerReadRepository implements PlayerReadRepositoryInt
             .leftJoinAndSelect('characters.player', 'characterPlayer')
             .getOneOrFail();
 
-        return PSQLPlayerReadRepository.PSQLPlayerToPlayer(retrievedPlayer);
+        return PSQLPlayerReadRepository.toPlayer(retrievedPlayer);
     }
 }
