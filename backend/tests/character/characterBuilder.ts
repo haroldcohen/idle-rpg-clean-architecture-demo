@@ -1,4 +1,6 @@
 import Character from '../../src/core/domain/models/character/character';
+import Uuid4Generator from '../../src/adapters/primaries/common/uuid4Generator';
+import {Uuid4GeneratorInterface} from "../../src/core/useCases/common/interfaces/uuid4GeneratorInterface";
 
 export default class CharacterBuilder {
     name!: string;
@@ -14,6 +16,12 @@ export default class CharacterBuilder {
     magikPoints!: number;
 
     playerId!: string;
+
+    uuid4Generator: Uuid4GeneratorInterface;
+
+    constructor(uuid4Generator: Uuid4GeneratorInterface) {
+        this.uuid4Generator = uuid4Generator;
+    }
 
     withName(value: string): CharacterBuilder {
         this.name = value;
@@ -59,6 +67,7 @@ export default class CharacterBuilder {
 
     build(): Character {
         return new Character({
+            id: this.uuid4Generator.generate(),
             name: this.name,
             skillPoints: this.skillPoints || 12,
             healthPoints: this.healthPoints || 10,

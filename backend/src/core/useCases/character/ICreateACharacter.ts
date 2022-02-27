@@ -1,5 +1,6 @@
 import Character from '../../domain/models/character/character';
 import CharacterSnapshot from '../../domain/models/character/snapshot';
+import { Uuid4GeneratorInterface } from '../common/interfaces/uuid4GeneratorInterface';
 import { PlayerReadRepositoryInterface } from '../player/interfaces/playerReadRepositoryInterface';
 import { CharacterWriteRepositoryInterface } from './interfaces/characterWriteRepositoryInterface';
 import ICreateACharacterCommandType from './types/ICreateACharacterCommand';
@@ -9,12 +10,16 @@ export default class ICreateACharacter {
 
     #playerReadRepository: PlayerReadRepositoryInterface;
 
+    #uuid4Generator: Uuid4GeneratorInterface;
+
     constructor(
         characterWriteRepository: CharacterWriteRepositoryInterface,
         playerReadRepository: PlayerReadRepositoryInterface,
+        uuid4Generator: Uuid4GeneratorInterface,
     ) {
         this.#characterWriteRepository = characterWriteRepository;
         this.#playerReadRepository = playerReadRepository;
+        this.#uuid4Generator = uuid4Generator;
     }
 
     async execute(
@@ -22,6 +27,7 @@ export default class ICreateACharacter {
     ): Promise<CharacterSnapshot> {
         const { name, healthPoints, attackPoints, defensePoints, magikPoints, playerId } = command;
         const characterToCreate = new Character({
+            id: this.#uuid4Generator.generate(),
             name,
             skillPoints: 12,
             healthPoints: 10,

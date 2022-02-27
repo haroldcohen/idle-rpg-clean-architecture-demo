@@ -29,13 +29,17 @@ import InMemoryPlayerWriteRepository
     from '../../../src/adapters/secondaries/inMemory/player/InMemoryPlayerWriteRepository';
 import CharacterSnapshot from "../../../src/core/domain/models/character/snapshot";
 import PlayerSnapshot from "../../../src/core/domain/models/player/snapshot";
+import {Uuid4GeneratorInterface} from "../../../src/core/useCases/common/interfaces/uuid4GeneratorInterface";
+import Uuid4Generator from "../../../src/adapters/primaries/common/uuid4Generator";
+import StubUuid4Generator from "../../common/stubs/stubUuid4Generator";
 
 
 describe('As a Player, I can create a character that starts at' +
     'level 1, rank 1 with 12 SP, 10 HP, 0 AP, 0 DP, 0 MP.', () => {
     var player: Player;
+    var uuid4Generator: Uuid4GeneratorInterface = new Uuid4Generator();
     var playerSnapShot: PlayerSnapshot;
-    var playerId: string;
+    var playerId: string = uuid4Generator.generate();
     var inMemoryPlayersList: InMemoryPlayer[] = [];
     var playerReadRepository: PlayerReadRepositoryInterface;
     var playerWriteRepository: PlayerWriteRepositoryInterface;
@@ -49,7 +53,7 @@ describe('As a Player, I can create a character that starts at' +
         inMemoryCharactersList = [];
         inMemoryPlayersList = [];
         player = new PlayerBuilder()
-            .withId('1')
+            .withId(playerId)
             .build();
         playerSnapShot = player.snapshot();
         playerId = playerSnapShot.id;
@@ -72,10 +76,11 @@ describe('As a Player, I can create a character that starts at' +
         const createdCharacter =
             await new ICreateACharacter(
                 characterWriteRepository,
-                playerReadRepository
+                playerReadRepository,
+                new StubUuid4Generator(),
             ).execute(iCreateACharacterCommand);
         expectedCharacter = {
-            id: createdCharacter.id,
+            id: "6c5626a2-6a0d-42df-b498-a4aa5fc2d856",
             name: 'Legolas',
             skillPoints: 12,
             healthPoints: 10,
@@ -103,7 +108,8 @@ describe('As a Player, I can create a character that starts at' +
         const createdCharacter =
             await new ICreateACharacter(
                 characterWriteRepository,
-                playerReadRepository
+                playerReadRepository,
+                uuid4Generator,
             ).execute(iCreateACharacterCommand);
         expectedCharacter = {
             id: createdCharacter.id,
@@ -134,7 +140,8 @@ describe('As a Player, I can create a character that starts at' +
         const createdCharacter =
             await new ICreateACharacter(
                 characterWriteRepository,
-                playerReadRepository
+                playerReadRepository,
+                uuid4Generator,
             ).execute(iCreateACharacterCommand);
         expectedCharacter = {
             id: createdCharacter.id,
@@ -165,41 +172,43 @@ describe('As a Player, I can create a character that starts at' +
         await expect(
             new ICreateACharacter(
                 characterWriteRepository,
-                playerReadRepository
+                playerReadRepository,
+                uuid4Generator,
             ).execute(iCreateACharacterCommand)
         ).rejects.toThrow(CharacterDoesNotHaveEnoughSkillPointsException);
     });
 
     it('When I try to create an eleventh character, I receive an error.', async () => {
         player = new PlayerBuilder()
-            .withId('1')
+            .withId(playerId)
             .withCharacters([
-                new CharacterBuilder().withName('Frodo').withPlayerId('1').build(),
-                new CharacterBuilder().withName('Samwise').withPlayerId('1').build(),
-                new CharacterBuilder().withName('Pippin').withPlayerId('1').build(),
-                new CharacterBuilder().withName('Merry').withPlayerId('1').build(),
-                new CharacterBuilder().withName('Aragorn').withPlayerId('1').build(),
-                new CharacterBuilder().withName('Legolas').withPlayerId('1').build(),
-                new CharacterBuilder().withName('Gimli').withPlayerId('1').build(),
-                new CharacterBuilder().withName('Aragorn').withPlayerId('1').build(),
-                new CharacterBuilder().withName('Boromir').withPlayerId('1').build(),
-                new CharacterBuilder().withName('Gandalf').withPlayerId('1').build(),
+                new CharacterBuilder(uuid4Generator).withName('Frodo').withPlayerId(playerId).build(),
+                new CharacterBuilder(uuid4Generator).withName('Samwise').withPlayerId(playerId).build(),
+                new CharacterBuilder(uuid4Generator).withName('Pippin').withPlayerId(playerId).build(),
+                new CharacterBuilder(uuid4Generator).withName('Merry').withPlayerId(playerId).build(),
+                new CharacterBuilder(uuid4Generator).withName('Aragorn').withPlayerId(playerId).build(),
+                new CharacterBuilder(uuid4Generator).withName('Legolas').withPlayerId(playerId).build(),
+                new CharacterBuilder(uuid4Generator).withName('Gimli').withPlayerId(playerId).build(),
+                new CharacterBuilder(uuid4Generator).withName('Aragorn').withPlayerId(playerId).build(),
+                new CharacterBuilder(uuid4Generator).withName('Boromir').withPlayerId(playerId).build(),
+                new CharacterBuilder(uuid4Generator).withName('Gandalf').withPlayerId(playerId).build(),
             ])
             .build();
         await playerWriteRepository.create(player.snapshot());
         await expect(
             new ICreateACharacter(
                 characterWriteRepository,
-                playerReadRepository
+                playerReadRepository,
+                uuid4Generator,
             ).execute(iCreateACharacterCommand)
         ).rejects.toThrow(CharacterLimitReachedException);
     });
 
     it('When I try to use the same name twice, I receive an error.', async () => {
         player = new PlayerBuilder()
-            .withId('1')
+            .withId(playerId)
             .withCharacters([
-                new LegolasCharacterBuilder().withPlayerId('1').build(),
+                new LegolasCharacterBuilder(uuid4Generator).withPlayerId(playerId).build(),
             ])
             .build();
         playerSnapShot = player.snapshot();
@@ -207,7 +216,8 @@ describe('As a Player, I can create a character that starts at' +
         await expect(
             new ICreateACharacter(
                 characterWriteRepository,
-                playerReadRepository
+                playerReadRepository,
+                uuid4Generator,
             ).execute(iCreateACharacterCommand)
         ).rejects.toThrow(CharacterNameAlreadyTakenException);
     });
@@ -224,7 +234,8 @@ describe('As a Player, I can create a character that starts at' +
         await expect(
             new ICreateACharacter(
                 characterWriteRepository,
-                playerReadRepository
+                playerReadRepository,
+                uuid4Generator,
             ).execute(iCreateACharacterCommand)
         ).rejects.toThrow(CharacterNameLengthException);
     });
