@@ -3,7 +3,6 @@ import CharacterDto from '../../domain/models/character/dto';
 import { Uuid4GeneratorInterface } from '../common/interfaces/uuid4GeneratorInterface';
 import { PlayerReadRepositoryInterface } from '../player/interfaces/playerReadRepositoryInterface';
 import { PlayerWriteRepositoryInterface } from '../player/interfaces/playerWriteRepositoryInterface';
-import { CharacterWriteRepositoryInterface } from './interfaces/characterWriteRepositoryInterface';
 import ICreateACharacterCommandType from './types/ICreateACharacterCommand';
 
 export default class ICreateACharacter {

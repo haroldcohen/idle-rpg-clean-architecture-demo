@@ -12,12 +12,6 @@ export default class PlayerDto {
         }: {
             id: string,
             characters: CharacterDto[],
-            skillPoints: number,
-            healthPoints: number,
-            attackPoints: number,
-            defensePoints: number,
-            magikPoints: number,
-            playerId: string,
         },
     ) {
         this.id = id;

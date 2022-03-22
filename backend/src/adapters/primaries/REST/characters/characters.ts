@@ -5,25 +5,30 @@ import TYPES from '../../../../configuration/injection/types';
 import CharacterException from '../../../../core/domain/models/character/exceptions/characterException';
 import ICreateACharacter from '../../../../core/useCases/character/ICreateACharacter';
 import {
-    CharacterWriteRepositoryInterface,
-} from '../../../../core/useCases/character/interfaces/characterWriteRepositoryInterface';
-import {
     PlayerReadRepositoryInterface,
 } from '../../../../core/useCases/player/interfaces/playerReadRepositoryInterface';
+import {
+    PlayerWriteRepositoryInterface,
+} from '../../../../core/useCases/player/interfaces/playerWriteRepositoryInterface';
+import Uuid4Generator from '../../common/uuid4Generator';
 import CharacterPresenter from '../../presenters/characters/characterPresenter';
 import ICreateACharacterCommand from './commands/ICreateACharacterCommand';
 
 const charactersRouter = Router();
 
 charactersRouter.put('/', async (req: Request, res: Response) => {
-    const characterWriteRepository = container
-        .get<CharacterWriteRepositoryInterface>(TYPES.CharacterWriteRepositoryInterface);
     const playerReadRepository = container
         .get<PlayerReadRepositoryInterface>(TYPES.PlayerReadRepositoryInterface);
+    const playerWriteRepository = container
+        .get<PlayerWriteRepositoryInterface>(TYPES.PlayerWriteRepositoryInterface);
     const command = new ICreateACharacterCommand(req.body);
     try {
         command.validate();
-        const createdCharacter = await new ICreateACharacter(characterWriteRepository, playerReadRepository)
+        const createdCharacter = await new ICreateACharacter(
+            playerReadRepository,
+            playerWriteRepository,
+            new Uuid4Generator(),
+        )
             .execute(command);
         res.status(200);
 

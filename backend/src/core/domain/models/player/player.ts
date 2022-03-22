@@ -31,9 +31,9 @@ export default class Player {
     }
 
     toDto(): PlayerDto {
-        return {
+        return new PlayerDto({
             id: this.#id,
             characters: this.#characters.map((c) => c.toDto()),
-        };
+        });
     }
 }
